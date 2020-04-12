@@ -1,74 +1,71 @@
 <?php
-session_start();
-$autoload = 'autoload.php';
-require_once ($autoload);
+//НИКОГДА НЕ СОХРАНЯЙТЕ В СЕССИЮ ОБЪЕКТ!!!!
+//НЕ ИСПОЛЬЗУЙТЕ exit() - сломаются сессии.
 
-function mb_ucfirst($str, $encoding='UTF-8') {
-    $str = mb_ereg_replace('^[\ ]+', '', $str);
-    $str = mb_strtoupper(mb_substr($str, 0, 1, $encoding), $encoding).
-    mb_substr($str, 1, mb_strlen($str), $encoding);
-    return $str;
-}
+//error_reporting( E_ERROR );
+ini_set('display_errors','Off');
+header('Access-Control-Allow-Origin: *');
 
-////
-//
-//  СОЗДАЕМ АВТОМАТИЧЕСКИ ОЧЕРЕДЬ ДЛЯ НОВОГО КЛАССА
-//
-////
-function create_queue($classname, $connection) {
-    $prepare = new ex_class($connection);
-    $sql = "SHOW TABLES LIKE 'queue_$classname'";
-    $res = $prepare->get_sql_array($sql);
-    //echo $sql;
-    if (count($res) == 0) {
-        $sql = "CREATE TABLE IF NOT EXISTS `queue_$classname` ( "
-            ."      `id` int(11) NOT NULL,"
-            ."      `date` datetime NOT NULL,"
-            ."      `queuename` varchar(50) NOT NULL,"
-            ."      `metod` varchar(50) NOT NULL,"
-            ."      `q` varchar(500) NOT NULL,"
-            ."      `bodyq` longtext NOT NULL"
-            ."    ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;\r\n";
-        $res = $prepare->get_sql_array($sql);
-        $sql = "    ALTER TABLE `queue_$classname`"
-            ."      ADD PRIMARY KEY (`id`),"
-            ."      ADD FULLTEXT KEY `queuename` (`queuename`);\r\n";
-        $res = $prepare->get_sql_array($sql);
+require_once 'autoload.php'; //подключаем автозагрузку доп.классов
 
-        $sql = "    ALTER TABLE `queue_$classname`"
-            ."      MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;";
-        $res = $prepare->get_sql_array($sql);
+session_start(); //Стартуем сессию только после подключения библиотек
+require_once 'settings.php'; //подключаем автозагрузку доп.классов
+
+//Основной приниающий файл REST API isset($_SERVER["REDIRECT_QUERY_STRING"]) &&
+if (isset($_REQUEST["q"])) {
+    $metod = $_SERVER["REQUEST_METHOD"];
+    $q = $_REQUEST["q"];
+    unset($_REQUEST["q"]);
+    $res = explode("/", $q);
+
+    $class = clean_classname($res[0]);
+    $param = array_slice($res, 1);
+
+    if (class_exists($class)) {
+        $wClass = loader($class, $metod);
+        $result = $wClass->Init($param);
+
+    } elseif (class_exists("Pages")) {
+
+
+        $wClass = loader("Pages", $metod);
+        $result = $wClass->Init($res);
+
+    } else {
+        $result['result'] = false;
+        $result['error'] = "No such treatment";
+        $result['msg'] = "$class";
+
     }
-}
+} elseif (class_exists("Pages")) {
+    //станица index
 
-$connectionInfo = array("type" => "mysql", "host" => "localhost", "db" => "aatk_filebank", "user" => "aatk_filebank", "pass" => "");
+    $metod = $_SERVER["REQUEST_METHOD"];
 
-$res = array();
-$METHOD = $_SERVER['REQUEST_METHOD'];
-$param = $_REQUEST;
-$input = $param["q"];
-$query = explode('/', $input);
+    $wClass = loader("Pages", $metod);
+    $result = $wClass->Init([]);
 
-$classname = $query[0];
-/*НАДО БЕЗОПАСНО ОБРАБОТАТЬ ПЕРЕД EVAL*/
-$notAllow = Array('/', '\\', '"', ':', '*', '?', '<', '>', '|', '%');
-$classname = str_replace($notAllow, '', $classname);
-$classname = mb_substr($classname,0,50,'utf-8');
-$classname = mb_ucfirst($classname);
-/*ЗАКОНЧИЛИ ОБРЕЗАНИЕ*/
-try {
-    $comand = "\$wClass = new ".$classname."(\$connectionInfo);";
-    eval($comand);
-    create_queue($classname, $connectionInfo);
-    $res = $wClass->Start($METHOD, $param);   //У ВСЕХ КЛАССОВ ДОЛЖНА БЫТЬ ФУНКЦИЯ START
-} catch (Exception $e) {
-
-}
-
-
-if (is_string($res)) {
-    echo $res;
 } else {
-    echo json_encode( $res );
+    $result['result'] = false;
+    $result['error'] = "Error handling to a REST API";
 }
-?>
+
+
+unset($_SESSION["db_connect"]);
+
+if ((isset($result["result"]) && ($result["result"] === false)) || ($result === false)) {
+    header('HTTP/1.1 500 Internal Server Error');
+}
+
+//Выводим результат из благополучно выходим
+if (is_string($result)) {
+    echo $result;
+} elseif ($result instanceof SimpleXMLElement) {
+    header('Content-Type: text/xml; charset-utf-8');
+    echo $result->asXML();
+} elseif (is_bool($result)) {
+    //
+} else {
+    header("Content-type: application/json");
+    echo json_encode($result, JSON_UNESCAPED_UNICODE);
+}
