@@ -634,7 +634,7 @@ class Pages extends ex_class
         foreach ($out as $match) {
             $param_php = '<?php ';
             $param_php .= '$snippletdata = [{1}];';
-            $param_php .= '$Page->Write([{0}], $snippletdata);';
+            $param_php .= '$this->Write([{0}], $snippletdata);';
             $param_php .= '?>';
 
             $path = explode(".", $match[1]);
