@@ -1,8 +1,5 @@
 <?php
 
-//require_once ("default/simplexml_dump.php");
-//require_once ("default/simplexml_tree.php");
-
 define('ROOT',dirname(__FILE__).'/');
 
 function loader($class, $metod = "") {

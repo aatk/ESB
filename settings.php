@@ -45,7 +45,6 @@ function adddinamicsetting(&$settings)
 }
 
 $agent = explode(".", $_SERVER["HTTP_HOST"])[0];
-
 $settings["agent"] = $agent;
 
 //Динамическое подключение настроек

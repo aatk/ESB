@@ -37,15 +37,13 @@ class System extends ex_class
                 if (!in_array($value,array(".",".."))) {
                     $class = pathinfo($dir."/".$value);
                     $class = (str_ireplace(".class","",$class["filename"]));
-
-                    //echo "<p>Класс - $class</p>\r\n";
+                    echo "<p>Устанавливаем модуль $class</p>\r\n";
                     if (class_exists($class)) {
-
                         if (method_exists($class,'CreateDB')) {
-                            echo "<p>Устанавливаем модуль $class</p>\r\n";
                             $newobject = loader($class);
                             $newobject->CreateDB();
                         }
+                        echo "<p>Закончили с $class</p>\r\n";
                     }
 
                 }
@@ -73,6 +71,7 @@ class System extends ex_class
                 }
             }
         }
+
 
         echo "<h1>END INSTALL</h1>\r\n";
 

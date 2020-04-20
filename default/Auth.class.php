@@ -27,7 +27,7 @@ class Auth extends ex_class
             "id_userinfo" => ['type' => 'int(15)', 'null' => 'NOT NULL'],
             "su" => ['type' => 'bool'],
             "globalid" => ['type' => 'int(15)', 'null' => 'NOT NULL'],
-            "markdel" => ['type' => 'boolean', 'null' => 'NULL']
+            "markdel" => ['type' => 'bool', 'null' => 'NULL']
         );
 
         $info["Auth_Groups"] = array(
@@ -37,9 +37,9 @@ class Auth extends ex_class
             "globalid" => ['type' => 'int(15)', 'null' => 'NOT NULL']
         );
         $info["Auth_GroupRoles"] = array(
-            "id" => array('type' => 'int(11)', 'null' => 'NOT NULL', 'inc' => true),
-            "Auth_Groups_id" => array('type' => 'int(11)', 'null' => 'NOT NULL'),
-            "Rules_id" => array('type' => 'int(11)', 'null' => 'NOT NULL')
+            "id" => ['type' => 'int(11)', 'null' => 'NOT NULL', 'inc' => true],
+            "Auth_Groups_id" => ['type' => 'int(11)', 'null' => 'NOT NULL'],
+            "Rules_id" => ['type' => 'int(11)', 'null' => 'NOT NULL']
         );
 
         $info["Auth_UserGroups"] = array(
@@ -49,9 +49,10 @@ class Auth extends ex_class
         );
 
         $info["roles"] = array(
-            "id" => array('type' => 'int(11)', 'null' => 'NOT NULL', 'inc' => true),
-            "name" => array('type' => 'varchar(150)', 'null' => 'NOT NULL'),
-            "info" => array('type' => 'text')
+            "id" => ['type' => 'int(11)', 'null' => 'NOT NULL', 'inc' => true],
+            "name" => ['type' => 'varchar(150)', 'null' => 'NOT NULL'],
+            "info" => ['type' => 'text'],
+            "disabled" => ['type' => 'bool', 'null' => 'NOT NULL']
         );
 
         $info["userroles"] = array(
@@ -59,6 +60,12 @@ class Auth extends ex_class
             "userid" => array('type' => 'int(11)', 'null' => 'NOT NULL'),
             "roleid" => array('type' => 'int(11)', 'null' => 'NOT NULL')
         );
+
+        $info["Auth_RulesEnabled"] = [
+            "id" => ['type' => 'int(11)', 'null' => 'NOT NULL', 'inc' => true],
+            "rule_id" => ['type' => 'int(11)', 'null' => 'NOT NULL'],
+            "user_id" => ['type' => 'int(11)', 'null' => 'NOT NULL'],
+        ];
 
         $info["userrestorepsw"] = array(
             "id" => array('type' => 'int(15)', 'null' => 'NOT NULL', 'inc' => true),
@@ -114,6 +121,12 @@ class Auth extends ex_class
             "ssoparams" => ['type' => 'text', 'null' => 'NOT NULL']
         ];
 
+        $info["usersinfo"] = [
+            "id" => ['type' => 'int(15)', 'null' => 'NOT NULL', 'inc' => true],
+            "name" => ['type' => 'varchar(150)', 'null' => 'NULL'],
+            "mail" => ['type' => 'varchar(150)', 'null' => 'NULL'],
+            "avatar" => ['type' => 'longblob', 'null' => 'NULL']
+        ];
 
         $info["auth_globalids"] = [
             "id" => ['type' => 'int(11)', 'null' => 'NOT NULL', 'inc' => true],
@@ -152,8 +165,8 @@ class Auth extends ex_class
                 $result = $this->send_code($param[1]);
             } elseif ($param[0] == "code") {
                 $result = $this->set_code($param[1]);
-            } elseif ($param[0] == "refresh") {
-                $result = $this->refreshtoken($param[1]);
+//            } elseif ($param[0] == "refresh") {
+//                $result = $this->refreshtoken($param[1]);
             } elseif ($param[0] == "forseadduser") {
                 $result = $this->forseadduser($param);
             } elseif ($param[0] == "createtoken") {
@@ -161,9 +174,9 @@ class Auth extends ex_class
             }
 
         } elseif (($this->metod == "PATCH") && (isset($param[0])) && (isset($param[1]))) {
-            if ($param[0] == "user") {
-                $result = $this->setuserinfo($param[1]);
-            }
+//            if ($param[0] == "user") {
+//                $result = $this->setuserinfo($param[1]);
+//            }
 
         } elseif (($this->metod == "GET") && (isset($param[0])) && (isset($param[1]))) {
             if ($param[0] == "info") {
@@ -396,55 +409,55 @@ class Auth extends ex_class
         return $result;
     }
 
-    public function refreshtoken($params_token)
-    {
-        //Генерируем новый токен на основе старого
-
-        //  grant_type=authorization_code
-        //  & access_token=<старый токен>
-        // [& client_id=<идентификатор приложения>]
-        // [& client_secret=<пароль приложения>]
-        // [& device_id=<идентификатор устройства>]
-        // [& device_name=<имя устройства>]
-        $client_id = $_REQUEST["client_id"];
-        $client_secret = $_REQUEST["client_secret"];
-
-        if ($this->check_client($client_id, $client_secret)) {
-            $params_token = array(
-                "access_token" => $_REQUEST["access_token"],
-                "client_id" => $_REQUEST["client_id"],
-                "client_secret" => $_REQUEST["client_secret"],
-                "device_id" => $_REQUEST["device_id"],
-                "device_name" => $_REQUEST["device_name"]
-            );
-
-            $tokeninfo = $this->userinfo($params_token, false); //Ищем включая просроченные токены
-            if ($tokeninfo["result"]) {
-                if ($tokeninfo["result"]["endtime"] > time()) {
-                    //Токен просрочен
-                    $result["result"] = false;
-                    $result["message"] = "You have working token";
-                } else {
-                    $newcode = $this->generate_code();
-                    $params_token["code"] = $newcode;
-                    $_SESSION["wm"]["iduser"] = $tokeninfo["result"]["iduser"];
-                    $_SESSION["wm"]["tel_number"] = $tokeninfo["result"]["tel_number"];
-
-                    $res = $this->gettoken($params_token);
-                    $result["result"] = true;
-                    $result["message"] = $res;
-                }
-            } else {
-                $result["result"] = false;
-                $result["message"] = "Error access token";
-            }
-        } else {
-            $result["result"] = false;
-            $result["message"] = "Error client";
-        }
-        return $result;
-
-    }
+//    public function refreshtoken($params_token)
+//    {
+//        //Генерируем новый токен на основе старого
+//
+//        //  grant_type=authorization_code
+//        //  & access_token=<старый токен>
+//        // [& client_id=<идентификатор приложения>]
+//        // [& client_secret=<пароль приложения>]
+//        // [& device_id=<идентификатор устройства>]
+//        // [& device_name=<имя устройства>]
+//        $client_id = $_REQUEST["client_id"];
+//        $client_secret = $_REQUEST["client_secret"];
+//
+//        if ($this->check_client($client_id, $client_secret)) {
+//            $params_token = array(
+//                "access_token" => $_REQUEST["access_token"],
+//                "client_id" => $_REQUEST["client_id"],
+//                "client_secret" => $_REQUEST["client_secret"],
+//                "device_id" => $_REQUEST["device_id"],
+//                "device_name" => $_REQUEST["device_name"]
+//            );
+//
+//            $tokeninfo = $this->userinfo($params_token, false); //Ищем включая просроченные токены
+//            if ($tokeninfo["result"]) {
+//                if ($tokeninfo["result"]["endtime"] > time()) {
+//                    //Токен просрочен
+//                    $result["result"] = false;
+//                    $result["message"] = "You have working token";
+//                } else {
+//                    $newcode = $this->generate_code();
+//                    $params_token["code"] = $newcode;
+//                    $_SESSION["wm"]["iduser"] = $tokeninfo["result"]["iduser"];
+//                    $_SESSION["wm"]["tel_number"] = $tokeninfo["result"]["tel_number"];
+//
+//                    $res = $this->gettoken($params_token);
+//                    $result["result"] = true;
+//                    $result["message"] = $res;
+//                }
+//            } else {
+//                $result["result"] = false;
+//                $result["message"] = "Error access token";
+//            }
+//        } else {
+//            $result["result"] = false;
+//            $result["message"] = "Error client";
+//        }
+//        return $result;
+//
+//    }
 
 
 //    private function auth($params = "")
@@ -663,13 +676,11 @@ class Auth extends ex_class
         ];
 
         $id = $this->get("users", ["[>]usersinfo" => ["id_userinfo" => "id"]], $field, ["users.id" => $id]);
-
         if ($id) {
             $result = ["result" => true, "info" => $id];
         }
         return $result;
     }
-
 
 
     private function geturlavatar($iduser)
@@ -885,19 +896,57 @@ class Auth extends ex_class
 
     public function adduserrule($guid, $ruleid, $do)
     {
-
+        $result = ["result" => false];
         if ($do == 0) {
-            $this->delete("userroles", ["userid" => $guid, "roleid" => $ruleid]);
+            $res = $this->getrule($ruleid);
+            if (isset($res["Rule"])) {
+
+                $delete = true;
+                if ($res["Rule"][0]["disabled"]) {
+                    //Заблокировано
+                    $usernowid = $this->getuserid();
+                    if (!$this->RuleEnabled($usernowid, $ruleid)) {
+                        $delete = false;
+                    }
+                }
+
+                if ($delete) {
+                    $this->delete("userroles", ["userid" => $guid, "roleid" => $ruleid]);
+                    $result = ["result" => true];
+                } else {
+                    $result["errors"] = ["Rule is bloked for you"];
+                }
+            }
         } elseif ($do == 1) {
-            if (!$this->has("userroles", ["userid" => $guid, "roleid" => $ruleid])) {
-                $this->insert("userroles", ["userid" => $guid, "roleid" => $ruleid]);
+
+            $res = $this->getrule($ruleid);
+            if (isset($res["Rule"])) {
+
+                $insert = true;
+                if ($res["Rule"][0]["disabled"]) {
+                    //Заблокировано
+                    $usernowid = $this->getuserid();
+                    if (!$this->RuleEnabled($usernowid, $ruleid)) {
+                        $insert = false;
+                    }
+                }
+
+                if ($insert) {
+                    if (!$this->has("userroles", ["userid" => $guid, "roleid" => $ruleid])) {
+                        $this->insert("userroles", ["userid" => $guid, "roleid" => $ruleid]);
+                        $result = ["result" => true];
+                    }
+                } else {
+                    $result["errors"] = ["Rule is bloked for you"];
+                }
             }
         }
 
-        return ["result" => true];
+        return $result;
     }
 
-    public function setusergroup($guid, $group, $do) {
+    public function setusergroup($guid, $group, $do)
+    {
 
         if ($do == 0) {
             $this->delete("Auth_UserGroups", ["users_id" => $guid, "Auth_Groups_id" => $group]);
@@ -933,7 +982,7 @@ class Auth extends ex_class
         if ($id == 0) {
             $result = $this->select("auth_globalids", "*");
         } else {
-            $result = $this->get("auth_globalids", ["id", "name"], ["id" => $id] );
+            $result = $this->get("auth_globalids", ["id", "name"], ["id" => $id]);
         }
         return $result;
     }
@@ -971,9 +1020,27 @@ class Auth extends ex_class
         $result = ["result" => false];
         if ($this->userauth()) {
 
-            $this->delete("Auth_GroupRoles", ["Auth_Groups_id"=> $id]);
+            $this->delete("Auth_GroupRoles", ["Auth_Groups_id" => $id]);
             foreach ($rules as $rule) {
-                $this->insert("Auth_GroupRoles", ["Auth_Groups_id" => $id, "Rules_id" => $rule]);
+
+                $res = $this->getrule($ruleid);
+                if (isset($result["Rule"])) {
+
+                    $insert = true;
+                    if ($result["Rule"]["disabled"]) {
+                        //Заблокировано
+                        $guid = $this->getuserid();
+                        if (!$this->RuleEnabled($guid, $ruleid)) {
+                            $insert = false;
+                        }
+                    }
+
+                    if ($insert) {
+                        $this->insert("Auth_GroupRoles", ["Auth_Groups_id" => $id, "Rules_id" => $rule]);
+                    } else {
+                        $result["errors"][] = ["Rules ID: ".$ruleid." is bloked for you"];
+                    }
+                }
             }
 
             $result["result"] = true;
@@ -1048,7 +1115,7 @@ class Auth extends ex_class
 
     /** RULES  */
 
-    public function setrule($newname, $oldname = "", $info = "")
+    public function setrule($newname, $oldname = "", $info = "", $disabled = false)
     {
         $result = ["result" => false];
 
@@ -1059,12 +1126,12 @@ class Auth extends ex_class
 
         $idroles = 0;
         if (isset($oldrole["id"])) {
-            $roles = $this->update("roles", ["name" => $newname, "info" => $info], ["id" => $oldrole["id"]]);
+            $roles = $this->update("roles", ["name" => $newname, "info" => $info, "disabled" => $disabled], ["id" => $oldrole["id"]]);
             $idroles = $oldrole["id"];
         } else {
             $oldrole = $this->get("roles", "*", ["name" => $newname]);
             if (!isset($oldrole["id"])) {
-                $idroles = $this->insert("roles", ["name" => $newname, "info" => $info]);
+                $idroles = $this->insert("roles", ["name" => $newname, "info" => $info, "disabled" => $disabled]);
             }
         }
 
@@ -1084,6 +1151,25 @@ class Auth extends ex_class
             $result["Rules"] = $roles;
         }
 
+        return $result;
+    }
+
+    public function getrule($id)
+    {
+        $result = ["result" => false];
+        if ($this->userauth()) {
+            $rules = $this->select("roles", "*", ["id" => $id]);
+
+            $result["result"] = true;
+            $result["Rule"] = $rules;
+        }
+
+        return $result;
+    }
+
+    public function RuleEnabled($userid, $ruleid)
+    {
+        $result = $this->has("Auth_RulesEnabled", ["user_id" => $userid, "rule_id" => $ruleid]);
         return $result;
     }
 
@@ -1156,12 +1242,6 @@ class Auth extends ex_class
     }
 
 
-
-
-
-
-
-
     public function getuserid($guid = "")
     {
         $auth["idauth"] = false;
@@ -1180,6 +1260,8 @@ class Auth extends ex_class
             $res = $this->haveuser($login, $password);
             if ($res["result"]) {
                 $this->setsession($res["guid"]);
+
+                $this->addusersessioninfo("basicpassword", $_SERVER["PHP_AUTH_PW"]);
                 $resut = true;
             }
         }

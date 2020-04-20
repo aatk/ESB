@@ -25,7 +25,7 @@ class ex_class extends db_connect
         $this->gid = $gid;
     }
 
-    public function __construct($connectionInfo, $debug = false)
+    public function __construct($connectionInfo = null, $debug = false)
     {
         $this->gid = $_SESSION["auth"]["globalid"];
 
@@ -34,6 +34,7 @@ class ex_class extends db_connect
         if ($connectionInfo == null) {
             $connectionInfo = $_SESSION["i4b"]["connectionInfo"];
         }
+
         parent::__construct($connectionInfo, $this->debugclass);
 
         $this->GET = $_GET;
@@ -191,6 +192,17 @@ class ex_class extends db_connect
         return strlen($header_line);
     }
 
+    public function getgetarray($data)
+    {
+        $encoded = "";
+        foreach($data as $name => $value) {
+            $encoded .= rawurlencode($name).'='.rawurlencode($value).'&';
+        }
+        $encoded = substr($encoded, 0, strlen($encoded)-1);
+
+        return $encoded;
+    }
+
     public function http_c_post($url, $data, $exparam = [])
     {
         $out = false;
@@ -215,7 +227,8 @@ class ex_class extends db_connect
                 curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
                 curl_setopt($ch, CURLOPT_USERPWD, $exparam["basicauth"]["username"].":".$exparam["basicauth"]["password"]);
             }
-            curl_setopt($ch, CURLOPT_POSTFIELDS,  $encoded);
+
+
             curl_setopt($ch, CURLOPT_HEADER, 0);
 
 
@@ -247,7 +260,6 @@ class ex_class extends db_connect
             curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
             curl_setopt($ch, CURLOPT_HEADERFUNCTION, array($this, 'header_callback'));
 
-
             if ($cert) {
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true); //for solving certificate issue
                 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, true);
@@ -255,6 +267,8 @@ class ex_class extends db_connect
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); //for solving certificate issue
                 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
             }
+
+            curl_setopt($ch, CURLOPT_POSTFIELDS,  $encoded);
 
             $out = curl_exec($ch);
             curl_close($ch);

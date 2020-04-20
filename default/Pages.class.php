@@ -80,16 +80,6 @@ class Pages extends ex_class
         $this->create($connectionInfo['database_type'], $info);
     }
 
-    /* Основная функция для вызова функций класса
-    На Входе
-      $param - массив
-      [0] - имя функции или идентификатор процесса
-      [1] - параметры для принимающей функции
-    На выходе
-      Результат работы функции либо
-      $result["result"] = false;                  - ошибка вызова функции
-      $result["error"]  = "Нет такой обработки";  - описание ошибки
-    */
 
     public function Savepage($Params)
     {
@@ -327,6 +317,16 @@ class Pages extends ex_class
         return $res;
     }
 
+    /* Основная функция для вызова функций класса
+    На Входе
+      $param - массив
+      [0] - имя функции или идентификатор процесса
+      [1] - параметры для принимающей функции
+    На выходе
+      Результат работы функции либо
+      $result["result"] = false;                  - ошибка вызова функции
+      $result["error"]  = "Нет такой обработки";  - описание ошибки
+    */
     public function Init($param, $Params = null)
     {
 
@@ -381,15 +381,14 @@ class Pages extends ex_class
         $fullnamepage = $namepage;
 
 
-
         $indexdot = strrpos($namepage, ".");
         if ($indexdot === false) {
 
             $pageimp = [];
-            $pageex = explode("/",$namepage);
+            $pageex = explode("/", $namepage);
             foreach ($pageex as $page_path) {
                 $pageimp[] = $page_path;
-                $newpage = implode("/",$pageimp);
+                $newpage = implode("/", $pageimp);
                 $existlocal = file_exists($this->Patch . "pages/$newpage.php");
                 if ($existlocal) {
                     $namepage = $newpage;
@@ -551,7 +550,7 @@ class Pages extends ex_class
             $result = "false";
         } elseif (is_int(substr($data, 1))) {
             //Ошибка
-        } elseif ((substr($data, 0, 1) == "\"") || (substr($data, 0, 1) == "\'")){
+        } elseif ((substr($data, 0, 1) == "\"") || (substr($data, 0, 1) == "\'")) {
             //Ошибка
             $result = $data;
         } elseif (count($dataarray) > 1) {
@@ -638,17 +637,17 @@ class Pages extends ex_class
             $param_php .= '?>';
 
             $path = explode(".", $match[1]);
-            $newpath =[];
+            $newpath = [];
             foreach ($path as $pin) {
-                $newpath[] = '"'.$pin.'"';
+                $newpath[] = '"' . $pin . '"';
             }
             $path = implode(",", $newpath);
 
             $snippletparams = explode(",", $match[2]);
-            $newparams =[];
+            $newparams = [];
             foreach ($snippletparams as $pin) {
                 $pin = trim($pin);
-                $newparams[] = '$'.$pin; //'"'.$pin.'" =>
+                $newparams[] = '$' . $pin; //'"'.$pin.'" =>
             }
             $snippletparams = implode(",", $newparams);
 

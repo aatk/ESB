@@ -7,13 +7,18 @@ class Cloud extends ex_class
     private $metod;
     private $dirname;
 
-    public function __construct($metod = "")
+    public function __construct($metod = "", $debug = false)
     {
+        $this->debugclass = $debug;
         $this->connectionInfo = $_SESSION["i4b"]["connectionInfo"]; //Прочитаем настройки подключения к БД
-        parent::__construct($this->connectionInfo);
+        parent::__construct($this->connectionInfo, $debug);
 
         $this->metod = $metod;
         $this->dirname = "cloudfiles";
+    }
+
+    public function SetDirname ($dirname) {
+        $this->dirname = $dirname;//"democloud";
     }
 
     public function CreateDB()
@@ -51,39 +56,6 @@ class Cloud extends ex_class
 
         $res = $this->create($this->connectionInfo['database_type'], $info);
     }
-
-    public function Init($param)
-    {
-        $result = array();
-
-        if (($this->metod == "POST") && (isset($param[0])) && (isset($param[1]))) {
-            if ($param[0] == "upload") {
-                $result = $this->upload($param);
-
-            }
-        } elseif (($this->metod == "GET")) {
-            if ($param[0] == "download") {
-                $result = $this->download($param[1], $param[2]);
-
-            } elseif ($param[0] == "test") {
-                $result = $this->test($param[1]);
-
-            }
-        } elseif (($this->metod == "DELETE")) {
-
-            if ($param[0] == "delete") {
-                $result = $this->del($param[1]);
-
-            }
-        }
-
-        return $result;
-    }
-
-    public function SetDirname ($dirname) {
-        $this->dirname = $dirname;
-    }
-
 
     /**
      * @param $fullfilename
@@ -177,7 +149,7 @@ class Cloud extends ex_class
         $md5dir = md5(mb_strtolower($dir));
 
         $result = [];
-        $oldinfo = $this->select("clouds_vdisk", ["name", "ext"], ["dirmd5" => $md5dir]);
+        $oldinfo = $this->select("clouds_vdisk", ["name", "ext", "md5"], ["dirmd5" => $md5dir]);
         if ($oldinfo) {
             foreach ($oldinfo as $value) {
                 $result[] = $value["name"].".".$value["ext"];
@@ -213,6 +185,26 @@ class Cloud extends ex_class
 
     }
 
+    public function vfile_info($fullfilename) {
+
+        $result = "";
+        $fileinfo = pathinfo($fullfilename);
+
+        $dirname = mb_strtolower($fileinfo['dirname']);
+        $dirmd5 = md5($dirname);
+
+        $ext = $fileinfo['extension'];
+        $name = $fileinfo['filename'];
+
+        $AND = ["dirmd5" => $dirmd5, "name" => $name, "ext" => $ext];
+
+        $result = $this->get("clouds_vdisk", "md5", ["AND" => $AND]);
+        //if ($oldinfo) {
+        //    $result = $this->getcontent($oldinfo, $name.".".$ext); //$this->download($oldinfo, $name.".".$ext);
+        //}
+
+        return $result;
+    }
 
     public function vfile_get_contents($fullfilename) {
 
@@ -235,6 +227,33 @@ class Cloud extends ex_class
         return $result;
     }
 
+    public function Init($param)
+    {
+        $result = array();
+
+        if (($this->metod == "POST") && (isset($param[0])) && (isset($param[1]))) {
+            if ($param[0] == "upload") {
+                $result = $this->upload($param);
+
+            }
+        } elseif (($this->metod == "GET")) {
+            if ($param[0] == "download") {
+                $result = $this->download($param[1], $param[2]);
+
+            } elseif ($param[0] == "test") {
+                $result = $this->test($param[1]);
+
+            }
+        } elseif (($this->metod == "DELETE")) {
+
+            if ($param[0] == "delete") {
+                $result = $this->del($param[1]);
+
+            }
+        }
+
+        return $result;
+    }
 
     public function upload($params, $content = "")
     {

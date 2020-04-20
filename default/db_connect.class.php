@@ -25,6 +25,7 @@ class db_connect
             if (!isset($_SESSION["db_connect"]) && (is_null($_SESSION["db_connect"]["server"]))) {
                 $_SESSION["db_connect"] = new Medoo($connectionInfo);
             }
+
             $this->sql_interface = $_SESSION["db_connect"];
 
             //$this->sql_interface->query("SET NAMES utf8");

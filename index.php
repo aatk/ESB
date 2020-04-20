@@ -6,12 +6,13 @@
 ini_set('display_errors','Off');
 header('Access-Control-Allow-Origin: *');
 
+//Если надо обновить все настройки и таблицы, сделайте пустой php с $System->UpdateSystem();
+
 require_once 'autoload.php'; //подключаем автозагрузку доп.классов
-
 session_start(); //Стартуем сессию только после подключения библиотек
-require_once 'settings.php'; //подключаем автозагрузку доп.классов
+require_once 'settings.php'; //подключаем настройки
 
-//Основной приниающий файл REST API isset($_SERVER["REDIRECT_QUERY_STRING"]) &&
+//Основной приниающий файл REST API
 if (isset($_REQUEST["q"])) {
     $metod = $_SERVER["REQUEST_METHOD"];
     $q = $_REQUEST["q"];
@@ -26,11 +27,8 @@ if (isset($_REQUEST["q"])) {
         $result = $wClass->Init($param);
 
     } elseif (class_exists("Pages")) {
-
-
         $wClass = loader("Pages", $metod);
         $result = $wClass->Init($res);
-
     } else {
         $result['result'] = false;
         $result['error'] = "No such treatment";
@@ -51,13 +49,13 @@ if (isset($_REQUEST["q"])) {
 }
 
 
-unset($_SESSION["db_connect"]);
+unset($_SESSION["db_connect"]); // удаляем из сессии класс с базой
 
 if ((isset($result["result"]) && ($result["result"] === false)) || ($result === false)) {
     header('HTTP/1.1 500 Internal Server Error');
 }
 
-//Выводим результат из благополучно выходим
+//Выводим результат и благополучно выходим
 if (is_string($result)) {
     echo $result;
 } elseif ($result instanceof SimpleXMLElement) {
