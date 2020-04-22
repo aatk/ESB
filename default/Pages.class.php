@@ -567,7 +567,7 @@ class Pages extends ex_class
 
     private function getpagewithforandif($content)
     {
-        $snipplet = '{{\s?[$]{1}\s?([a-zA-Z,\d,.]+)\s?[(]{1}([a-zA-Z,\d,\s,.]+)[)]{1}\s?}}';
+        $snipplet = '{{\s?[$]{1}\s?([a-zA-Z,\d,.]+)\s?[(]{1}([a-zA-Z,\d,\s,.]+|)[)]{1}\s?}}';
 
         $foreach = '{{\s?foreach\s?\(([a-zA-Z,\d,.]+)\s+as\s+([a-zA-Z,\d]+)\s?\)}}';
         $endforeach = '{{\s?endforeach\s?}}';
@@ -643,13 +643,16 @@ class Pages extends ex_class
             }
             $path = implode(",", $newpath);
 
-            $snippletparams = explode(",", $match[2]);
-            $newparams = [];
-            foreach ($snippletparams as $pin) {
-                $pin = trim($pin);
-                $newparams[] = '$' . $pin; //'"'.$pin.'" =>
+            $snippletparams = "";
+            if (trim($match[2]) != "") {
+                $snippletparams = explode(",", $match[2]);
+                $newparams = [];
+                foreach ($snippletparams as $pin) {
+                    $pin = trim($pin);
+                    $newparams[] = '$' . $pin;
+                }
+                $snippletparams = implode(",", $newparams);
             }
-            $snippletparams = implode(",", $newparams);
 
 
             $param_php = str_replace("{1}", $snippletparams, $param_php);

@@ -13,7 +13,13 @@ class Auth extends ex_class
         $this->connectionInfo = $_SESSION["i4b"]["connectionInfo"]; //Прочитаем настройки подключения к БД
         $this->metod = $metod;
 
-        $this->SetGlobalID($_SESSION["auth"]["globalid"]);
+        //$this->SetGlobalID($_SESSION["auth"]["globalid"]);
+
+        if (isset($_SESSION["auth"]["globalid"])) {
+            $this->SetGlobalID($_SESSION["auth"]["globalid"]);
+        } else {
+            $this->SetGlobalID(0);
+        }
     }
 
     /* Функция для установки нужны таблиц для класса */
@@ -139,6 +145,8 @@ class Auth extends ex_class
 
     public function InstallModule()
     {
+        $this->setrule("Auth-Btrip-UserAdmin", "Auth-Btrip-UserAdmin", "Administrator of the user group", true);
+
         $globalids = ["id" => 1, "name" => "default"];
 
         if (!$this->has("auth_globalids", ["id" => $globalids["id"]])) {
@@ -845,15 +853,29 @@ class Auth extends ex_class
     public function adduser($login, $password, $su = false, $gid = 0)
     {
         $result = ["result" => false];
-//        $id = $this->insert("users", ["login" => $login, "password" => md5($password)]);
-//        if ($id) {
-//            $result = ["result" => true, "guid" => $id];
-//        }
-//        return $result;
+
+        $setusersuirule = false;
 
         $globalid = $this->gid;
         if ($su) {
             $globalid = $gid;
+        }
+
+        if ($globalid == 0) {
+            //Нет gid - надо назначть пользователю группу
+            $parts = explode("@", $login);
+            $globalidname = $parts[1];
+
+            $res = $this->getglobalid($globalidname);
+            if ($res["result"]) {
+                //Есть такой gid
+                $globalid = $res["id"];
+            } else {
+                //Нет такого gid - делаем пользователя его администратором
+                $globalid = $this->setglobalids($globalidname);
+
+                $setusersuirule = true;
+            }
         }
 
         $users = [
@@ -862,12 +884,17 @@ class Auth extends ex_class
             "id_userinfo" => 0,
             "su" => 0,
             "globalid" => $globalid,
-            "markdel" => false
+            "markdel" => 0
         ];
 
         $id = $this->insert("users", $users);
         if ($id) {
-            $result = ["result" => true, "guid" => $id];
+            if ($setusersuirule) {
+                $idrule = $this->getrulebyname("Auth-Btrip-UserAdmin");
+                $this->setuserrule($id, $idrule);
+            }
+
+            $result = ["result" => true, "guid" => $id, "setusersuirule" => $setusersuirule];
         }
 
         return $result;
@@ -987,6 +1014,18 @@ class Auth extends ex_class
         return $result;
     }
 
+    public function getglobalid($name = "")
+    {
+        $result = ["result" => false];
+        if (trim($name) != "") {
+            $result = $this->get("auth_globalids", ["id", "name"], ["name" => trim($name)]);
+            if (isset($result["id"])) {
+                $result["result"] = true;
+            }
+        }
+        return $result;
+    }
+
 
     /**    GROUPS             **/
 
@@ -1038,7 +1077,7 @@ class Auth extends ex_class
                     if ($insert) {
                         $this->insert("Auth_GroupRoles", ["Auth_Groups_id" => $id, "Rules_id" => $rule]);
                     } else {
-                        $result["errors"][] = ["Rules ID: ".$ruleid." is bloked for you"];
+                        $result["errors"][] = ["Rules ID: " . $ruleid . " is bloked for you"];
                     }
                 }
             }
@@ -1164,6 +1203,21 @@ class Auth extends ex_class
             $result["Rule"] = $rules;
         }
 
+        return $result;
+    }
+
+    private function getrulebyname($name)
+    {
+        $result = $this->get("roles", ["id"], ["name" => trim($name)]);
+        return $result["id"];
+    }
+
+    private function setuserrule($user, $rule)
+    {
+        $result = false;
+        if (!$this->has("userroles", ["userid" => $user, "roleid" => $rule] )) {
+            $result = $this->insert("userroles", ["userid" => $user, "roleid" => $rule]);
+        }
         return $result;
     }
 
@@ -1395,13 +1449,8 @@ class Auth extends ex_class
     //Фукции ниже надо переделать, тексты не должны быть в открытом виде
     //Почту нужно отправлять через свой класс, на случай если поменяется скрипт отправки
 
-    public function sendpass($email)
+    public function sendpass($email, $urlconfirm, $subject, $messagetemplate)
     {
-        //global $ApMailerConfig;
-        //$to = "<".$email.">";
-
-        $subject = "Регистрация/восстановление пароля REPORTS";
-
         $this->delete("userrestorepsw", ["dateendlive[<=]" => date("Y-m-d H:i:s")]);
 
         $userid = 0;
@@ -1409,6 +1458,7 @@ class Auth extends ex_class
         if ($rid["result"]) {
             $userid = $rid["guid"];
         }
+
         $code = md5($this->generate_code());
         $dates = [
             "userid" => $userid,
@@ -1418,26 +1468,23 @@ class Auth extends ex_class
         ];
         $id = $this->insert("userrestorepsw", $dates);
 
-        $href = $this->baseurl() . "/restorepwdpage?token=" . $code;
+        $href = $this->baseurl() . "/" . $urlconfirm . "?token=" . $code;
 
-        $message = '<html>
-            <head>
-                <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-                <title>HTML email test</title>
-            </head>
-            <body>
-            <p>Уважаемый пользователь!</p>
-            <p>Вы воспользовались процедурой регистрации или восстановления пароля на портале btrip.ru</p>
-            <p>Для получения нового пароля Вам необходимо перейти по указанной ссылке:
-            <a href="' . $href . '">' . $href . '</a>
-            <p>Ссылка действительна в течение 1(одного) часа с момента отправки данного письма.<br/>
-            Если Вы не обращались к процедуре восстановления пароля, просто проигнорируйте данное письмо. Ваш пароль не будет изменен.<br/>
-            Если в дальнейшем Вы будете получать такие письма, это означает, что кому-то стал известен Ваш логин и адрес электронной почты.</p></br>
-            </body>
-            </html>';
+        if (class_exists("Pages")) {
+            //$messagetemplate = "x.y.z";
+            $messagetemplatear = explode(".", $messagetemplate);
+            $Params = [
+                $href, $email, $userid
+            ];
+            $Pages = new  Pages();
+            $message = $Pages->Init($messagetemplatear, $Params);
+        } else {
+            $message = $messagetemplate;
+        }
 
         $mail = new Mail();
-        $res = $mail->SendMail(["Address" => [$email]], $subject, $message);
+        $Address = ["Address" => [$email]];
+        $res = $mail->SendMail($Address, $subject, $message);
         if ($res["result"]) {
             $result = ["result" => true, "message" => 'Message has been sent'];
         } else {
@@ -1447,10 +1494,9 @@ class Auth extends ex_class
         return $result;
     }
 
-    public function sendpasstomail($token)
+    public function sendpasstomail($token, $subject, $messagetemplate)
     {
-        //global $ApMailerConfig;
-        $result = ["result" => false, "message" => "Непредвиденная ошибка"];
+        $result = ["result" => false, "message" => "Unexpected error"];
 
         $this->delete("userrestorepsw", ["dateendlive[<=]" => date("Y-m-d H:i:s")]);
         $restoreinfo = $this->get("userrestorepsw", ["id", "userid", "login"], ["newtoken" => $token]);
@@ -1464,36 +1510,34 @@ class Auth extends ex_class
 
             if ($userid == 0) {
                 //Создадим нового
-                $res = $this->adduser($restoreinfo["login"], $newpass);
+                $res = $this->adduser($email, $newpass);
+                $userid = $res["guid"];
             } else {
                 $this->moduser($userid, ["password" => md5($newpass)]);
             }
 
-            $subject = "Восстановление пароля REPORTS";
-            $message = '<html>
-            <head>
-                <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-                <title>HTML email test</title>
-            </head>
-            <body>
-            <p>Уважаемый пользователь!</p>
-            <p>Списибо за вашу работу REPORTS</p>
-            <p>Ваш новый пароль: <pre>' . $newpass . '</pre><br/>
-            <p>Если в дальнейшем Вы будете получать такие письма, это означает, что кому-то стал известен Ваш логин и адрес электронной почты.</p></br>
-            </body>
-            </html>';
-
+            if (class_exists("Pages")) {
+                //$messagetemplate = "x.y.z";
+                $messagetemplatear = explode(".", $messagetemplate);
+                $Params = [
+                    $newpass, $email, $userid
+                ];
+                $Pages = new  Pages();
+                $message = $Pages->Init($messagetemplatear, $Params);
+            } else {
+                $message = $messagetemplate;
+            }
 
             $mail = new Mail();
             $res = $mail->SendMail(["Address" => [$email]], $subject, $message);
             if ($res["result"]) {
-                $result = ["result" => true, "message" => 'Пароль отправлен на почту'];
+                $result = ["result" => true, "message" => 'Password sent to your email'];
             } else {
-                $result = ["result" => false, "message" => 'Пароль НЕ отправлен. Ошибка отправки сообщения: ' . $res["message"]];
+                $result = ["result" => false, "message" => 'The password was NOT sent. Error sending message: ' . $res["message"]];
             }
 
         } else {
-            $result = ["result" => false, "message" => "Токен не актуальный"];
+            $result = ["result" => false, "message" => "The token is not current"];
         }
 
         return $result;
