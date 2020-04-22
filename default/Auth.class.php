@@ -882,7 +882,7 @@ class Auth extends ex_class
             "login" => $login,
             "password" => md5($password),
             "id_userinfo" => 0,
-            "su" => 0,
+            "su" => $su,
             "globalid" => $globalid,
             "markdel" => 0
         ];
