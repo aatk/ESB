@@ -25,9 +25,16 @@ class ex_class extends db_connect
         $this->gid = $gid;
     }
 
+    public function trueexit($status = 0)
+    {
+        unset($_SESSION["db_connect"]);
+        exit($status);
+    }
+
+
     public function __construct($connectionInfo = null, $debug = false)
     {
-        $this->gid = $_SESSION["auth"]["globalid"];
+        $this->SetGlobalID($_SESSION["auth"]["globalid"]);
 
         $this->debugclass = $debug;
 
@@ -359,6 +366,16 @@ class ex_class extends db_connect
         }
 
         return $xml_data;
+    }
+
+    public function mb_ucwords($string)
+    {
+        $ars = explode(" ", $string);
+        $newars = [];
+        foreach ($ars as $word) {
+            $newars[] = mb_strtoupper(mb_substr($word,0,1), "utf-8").mb_substr($word,1);
+        }
+        return implode(" ", $newars);
     }
 
 }
