@@ -6,7 +6,7 @@
  * Time: 12:22
  */
 
-require 'vendors\Medoo\Medoo.php';
+require_once ROOT.'vendors/Medoo/Medoo.php';
 
 use Medoo\Medoo;
 
