@@ -10,7 +10,7 @@ class System extends ex_class
     
     public function InstallModule()
     {
-        $dirlist = [ "client", "default", "private", "tmp" ];
+        $dirlist = [ "controllers", "models", "vendors", "tmp" ];
         foreach ($dirlist as $dir)
         {
             if (!file_exists($dir))
@@ -28,7 +28,7 @@ class System extends ex_class
         echo "<h1>" . $_SERVER["SERVER_NAME"] . "</h1>\r\n";
         echo "<h1>CREATE DB</h1>\r\n";
         
-        $directories = [ 'classes', 'private', 'default', 'client' ];
+        $directories = [ 'controllers', 'models', 'vendors' ];
         
         /* Устанавливаем все БД */
         foreach ($directories as $dir)
