@@ -3,7 +3,6 @@
 $SERVERNAME = $_SERVER["HTTP_HOST"];
 
 ?>
-
 <html>
 <head>
 
@@ -18,22 +17,23 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
 
         $(document).ready(function ()
         {
-
+    
             $(".pages").hide();
             $(x.hash).show();
             //$.find(x.hash).parent.addClass("active");
-
-            $(".nav-link").on("click", function () {
+    
+            $(".nav-link").on("click", function ()
+            {
                 //
                 var href = $(this).attr("href");
                 $(".pages").hide();
                 //$.find(".active").removeClass("active");
-
+        
                 $(href).show();
                 //$.find(href).parent.addClass("active");
-
+        
             });
-
+    
         })
         
     </script>
@@ -54,11 +54,11 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
                 <a class="nav-link" href="#page2">CMS</a>
             </li>
         </ul>
-
-<!--        <form class="form-inline mt-2 mt-md-0">-->
-<!--            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">-->
-<!--            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
-<!--        </form>-->
+    
+        <!--        <form class="form-inline mt-2 mt-md-0">-->
+        <!--            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">-->
+        <!--            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+        <!--        </form>-->
 
     </div>
 </nav>
@@ -76,10 +76,10 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
 
             <p>Query API</p>
             <p>
-                Create a new php class in the format YOUNAME.class.php<br/>
-                save the file in the "client" or "private" folders<br/>
-                <br/>
-                The content of the new class must be:<br/>
+                Create a new php class in the format YOUNAME.class.php<br />
+                save the file in the "client" or "private" folders<br />
+                <br />
+                The content of the new class must be:<br />
             </p>
 
             <pre class="php" style="font-family:monospace;"><span style="color: #000000; font-weight: bold;">&lt;?php</span>
@@ -227,7 +227,7 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
                 <h1>Дополнения/Упрощения</h1>
                 <p>Все поддерживаемые CMS упрощения должны быть обрамлены в двойные фигурные скобки {{  и  }}</p>
                 <p>Если это сниппет, то после открывающих скобок "{{" должен стоять $ - он говорит о том, что дальше будет указан путь до сниппета</p>
-                <br/>
+                <br />
                 <h1>Переменные и массивы</h1>
                 <p>Переменные требуется использовать без знака "$" (доллар)</p>
                 <p>Доступ к значению массива доступен через "." (точку) чем глубже получение данных тем больше (точек).</p>
@@ -235,7 +235,7 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
 
 
             <div class="helpcontent">
-            <h1>Sniplets</h1>
+            <h1>Snippets</h1>
             <p>
                 Сниппеты позволяют подгружать на страницу одинаковый контекст, примером может быть:
                 Меню или Корзина, которые отображаются на каждой странице.
@@ -247,7 +247,7 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
             </p>
 
             <h2>Snippet path</h2>
-            <img src="img/snippet_path_demo.jpg"/>
+            <img src="img/snippet_path_demo.jpg" />
 
             <h2>Snippet code</h2>
             <pre class="php" style="font-family:monospace;"><span style="color: #000000; font-weight: bold;">&lt;?php</span>
@@ -260,9 +260,10 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
 
             <h2>Snippet query in page</h2>
             <pre class="php" style="font-family:monospace;"><span style="color: #009900;">&#123;</span><span style="color: #009900;">&#123;</span><span style="color: #000088;">$DEMO</span><span style="color: #339933;">.</span>Snippet<span style="color: #339933;">.</span>demo1<span style="color: #009900;">&#40;</span>argument1<span style="color: #339933;">,</span>argument2<span style="color: #009900;">&#41;</span><span style="color: #009900;">&#125;</span><span style="color: #009900;">&#125;</span></pre>
-
-            <?php $argument1 = "123"; $argument2 = "qwe";?>
-            <h2>Snippet ajax query</h2>
+    
+                <?php $argument1 = "123";
+                $argument2       = "qwe"; ?>
+                <h2>Snippet ajax query</h2>
             <pre class="javascript" style="font-family:monospace;"><span style="color: #339933;">&lt;</span>script<span style="color: #339933;">&gt;</span>
     $<span style="color: #009900;">&#40;</span>document<span style="color: #009900;">&#41;</span>.<span style="color: #660066;">ready</span><span style="color: #009900;">&#40;</span><span style="color: #000066; font-weight: bold;">function</span> <span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
         $.<span style="color: #000066; font-weight: bold;">get</span><span style="color: #009900;">&#40;</span><span style="color: #3366CC;">&quot;DEMO/snippet/demo1/123/qwe&quot;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
@@ -278,7 +279,7 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
             <div class="helpcontent">
                 <h1>if</h1>
                 <p>Упрощенный оператор if позволяет сравнивать значения переменных, аналогично оператору PHP</p>
-                <img scr=""/>
+                <img scr="" />
 
     <pre class="php" style="font-family:monospace;"><span style="color: #009900;">&#123;</span><span style="color: #009900;">&#123;</span><span style="color: #b1b100;">if</span> <span style="color: #009900;">&#40;</span><span style="color: #990000;">array</span><span style="color: #339933;">.</span>argument <span style="color: #339933;">==</span> argument1<span style="color: #009900;">&#41;</span><span style="color: #009900;">&#125;</span><span style="color: #009900;">&#125;</span>
 <span style="color: #339933;">&lt;</span>a<span style="color: #339933;">&gt;</span>Button<span style="color: #339933;">&lt;/</span>a<span style="color: #339933;">&gt;</span>
@@ -296,7 +297,7 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
             <div class="helpcontent">
                 <h1>foreach</h1>
                 <p>Упрощенный оператор foreach позволяет циклически пройти по массиву, аналогично оператору PHP</p>
-                <img scr=""/>
+                <img scr="" />
             <pre class="php" style="font-family:monospace;"><span style="color: #009900;">&#123;</span><span style="color: #009900;">&#123;</span><span style="color: #b1b100;">foreach</span> <span style="color: #009900;">&#40;</span><span style="color: #990000;">array</span> <span style="color: #b1b100;">as</span> items<span style="color: #009900;">&#41;</span><span style="color: #009900;">&#125;</span><span style="color: #009900;">&#125;</span>
             <span style="color: #339933;">&lt;</span>a<span style="color: #339933;">&gt;</span>Button<span style="color: #339933;">&lt;/</span>a<span style="color: #339933;">&gt;</span>
 <span style="color: #009900;">&#123;</span><span style="color: #009900;">&#123;</span><span style="color: #b1b100;">endforeach</span><span style="color: #009900;">&#125;</span><span style="color: #009900;">&#125;</span></pre>
@@ -312,7 +313,7 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
             <div class="helpcontent">
                 <h1>Variable</h1>
                 <p>Как было описано в начале, для отображения значения переменной достаточно указать её в фигурных скобках "{{" и "}}"</p>
-                <img scr=""/>
+                <img scr="" />
                 <pre class="php" style="font-family:monospace;"><span style="color: #009900;">&#123;</span><span style="color: #009900;">&#123;</span>variable<span style="color: #009900;">&#125;</span><span style="color: #009900;">&#125;</span></pre>
 
                 <p>similarly</p>
@@ -323,7 +324,7 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
             <div class="helpcontent">
             <h1>Array</h1>
                 <p>Как было описано в начале, для доступа к значению массива достаточно указать через точку путь к переменной, в фигурных скобках "{{" и "}}"</p>
-                <img scr=""/>
+                <img scr="" />
                 <pre class="php" style="font-family:monospace;"><span style="color: #009900;">&#123;</span><span style="color: #009900;">&#123;</span><span style="color: #990000;">array</span><span style="color: #339933;">.</span>name<span style="color: #339933;">.</span>name2<span style="color: #339933;">.</span>name3<span style="color: #009900;">&#125;</span><span style="color: #009900;">&#125;</span></pre>
 
                 <p>similarly</p>

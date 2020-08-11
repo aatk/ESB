@@ -1,13 +1,5 @@
 <?php
-session_start();
 unset($_SESSION["db_connect"]);
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require 'default/PHPMailer/Exception.php';
-require 'default/PHPMailer/PHPMailer.php';
-require 'default/PHPMailer/SMTP.php';
 
 function adddinamicsetting(&$settings)
 {
