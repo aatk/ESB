@@ -215,7 +215,7 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
 
             <p>
                 I4B CMS - позволяет структурировать и работать со страницами html, создавать контент и управлять им.
-                Вы можеете хранить страницы как классически файлами на диске, так и хрнить их в БД.
+                Вы можете хранить страницы как классически файлами на диске, так и хранить их в БД.
                 За работу с контентом CMS достаточно размещать свои файлы в папке "pages", за работу с контентом отвечает класс Pages.class.php
             </p>
 
@@ -224,9 +224,9 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
             </p>
 
             <div class="helpcontent">
-                <h1>Дополнения/Упращения</h1>
+                <h1>Дополнения/Упрощения</h1>
                 <p>Все поддерживаемые CMS упрощения должны быть обрамлены в двойные фигурные скобки {{  и  }}</p>
-                <p>Если это снипплет, то после открывающих скобок "{{" должен стоять $ - он говорит о том, что дальше будет указан путь до сниплета</p>
+                <p>Если это сниппет, то после открывающих скобок "{{" должен стоять $ - он говорит о том, что дальше будет указан путь до сниппета</p>
                 <br/>
                 <h1>Переменные и массивы</h1>
                 <p>Переменные требуется использовать без знака "$" (доллар)</p>
@@ -237,19 +237,19 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
             <div class="helpcontent">
             <h1>Sniplets</h1>
             <p>
-                Сниплеты позволяют подгружать на страницу одинаковый контекст, примером может быть:
+                Сниппеты позволяют подгружать на страницу одинаковый контекст, примером может быть:
                 Меню или Корзина, которые отображаются на каждой странице.
                 Различные вставки, такие как ссылки на соц.сети, статусы задач или заказов.
             </p>
             <p>
-                Сниплеты также можно вызывать динамически с помощью Ajax на страницах, которые могут возвращать какой либо динамический контент.
-                Примером вызова такого сниплета является загрузка страниц с пигинацией, или динамической загрузки контента.
+                Сниппеты также можно вызывать динамически с помощью Ajax на страницах, которые могут возвращать какой либо динамический контент.
+                Примером вызова такого сниппета является загрузка страниц с пагинацией, или динамической загрузки контента.
             </p>
 
-            <h2>Snipplet path</h2>
-            <img src="img/snipplet_path_demo.jpg"/>
+            <h2>Snippet path</h2>
+            <img src="img/snippet_path_demo.jpg"/>
 
-            <h2>Snipplet code</h2>
+            <h2>Snippet code</h2>
             <pre class="php" style="font-family:monospace;"><span style="color: #000000; font-weight: bold;">&lt;?php</span>
 <span style="color: #b1b100;">if</span> <span style="color: #009900;">&#40;</span><span style="color: #990000;">empty</span><span style="color: #009900;">&#40;</span><span style="color: #000088;">$Params</span><span style="color: #009900;">&#41;</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
     <span style="color: #666666; font-style: italic;">//if ajax load</span>
@@ -258,20 +258,20 @@ $SERVERNAME = $_SERVER["HTTP_HOST"];
 <span style="color: #b1b100;">echo</span> <span style="color: #990000;">json_encode</span><span style="color: #009900;">&#40;</span><span style="color: #000088;">$Params</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
 <span style="color: #000000; font-weight: bold;">?&gt;</span></pre>
 
-            <h2>Snipplet query in page</h2>
-            <pre class="php" style="font-family:monospace;"><span style="color: #009900;">&#123;</span><span style="color: #009900;">&#123;</span><span style="color: #000088;">$DEMO</span><span style="color: #339933;">.</span>snipplet<span style="color: #339933;">.</span>demo1<span style="color: #009900;">&#40;</span>argument1<span style="color: #339933;">,</span>argument2<span style="color: #009900;">&#41;</span><span style="color: #009900;">&#125;</span><span style="color: #009900;">&#125;</span></pre>
+            <h2>Snippet query in page</h2>
+            <pre class="php" style="font-family:monospace;"><span style="color: #009900;">&#123;</span><span style="color: #009900;">&#123;</span><span style="color: #000088;">$DEMO</span><span style="color: #339933;">.</span>Snippet<span style="color: #339933;">.</span>demo1<span style="color: #009900;">&#40;</span>argument1<span style="color: #339933;">,</span>argument2<span style="color: #009900;">&#41;</span><span style="color: #009900;">&#125;</span><span style="color: #009900;">&#125;</span></pre>
 
             <?php $argument1 = "123"; $argument2 = "qwe";?>
-            <h2>Snipplet ajax query</h2>
+            <h2>Snippet ajax query</h2>
             <pre class="javascript" style="font-family:monospace;"><span style="color: #339933;">&lt;</span>script<span style="color: #339933;">&gt;</span>
     $<span style="color: #009900;">&#40;</span>document<span style="color: #009900;">&#41;</span>.<span style="color: #660066;">ready</span><span style="color: #009900;">&#40;</span><span style="color: #000066; font-weight: bold;">function</span> <span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
-        $.<span style="color: #000066; font-weight: bold;">get</span><span style="color: #009900;">&#40;</span><span style="color: #3366CC;">&quot;DEMO/snipplet/demo1/123/qwe&quot;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
+        $.<span style="color: #000066; font-weight: bold;">get</span><span style="color: #009900;">&#40;</span><span style="color: #3366CC;">&quot;DEMO/snippet/demo1/123/qwe&quot;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
     <span style="color: #009900;">&#125;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
 <span style="color: #339933;">&lt;/</span>script<span style="color: #339933;">&gt;</span></pre>
 
 
-            <h2>Snipplet RESULT</h2>
-            {{$DEMO.snipplet.demo1(argument1,argument2)}}
+            <h2>Snippet RESULT</h2>
+            {{$DEMO.snippet.demo1(argument1,argument2)}}
 
             </div>
 
