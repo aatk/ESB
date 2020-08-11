@@ -7,8 +7,9 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ /index.php?q=$1 [L,QSA]
 
-php_flag display_startup_errors on
-php_flag display_errors on
-php_flag html_errors on
-php_value docref_root 1
-php_value docref_ext 1
+#Если что-то не работает попробуйте раскомментировать
+#php_flag display_startup_errors on
+#php_flag display_errors on
+#php_flag html_errors on
+#php_value docref_root 1
+#php_value docref_ext 1
