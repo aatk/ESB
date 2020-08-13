@@ -30,7 +30,6 @@ function clean_classname($classname)
     $classname = str_replace($notAllow, '', $classname);
     $classname = mb_substr($classname, 0, 50, 'utf-8');
     $classname = mb_ucfirst($classname);
-    
     //$classname = mysql_escape_string($classname);   //PHP 7 - не работает
     /*ЗАКОНЧИЛИ ОБРЕЗАНИЕ*/
     
@@ -47,7 +46,7 @@ function class_autoload($class_name)
     $require_file = "";
     if ($require_file == "")
     {
-        $file = ROOT . 'controllers/' . $class_name . '.class.php';
+        $file = ROOT . 'controllers/' . $class_name . '.controller.php';
         if (file_exists($file) != false)
         {
             $require_file = $file;
@@ -56,7 +55,7 @@ function class_autoload($class_name)
     
     if ($require_file == "")
     {
-        $file = ROOT . 'models/' . $class_name . '.class.php';
+        $file = ROOT . 'models/' . $class_name . '.model.php';
         if (file_exists($file) != false)
         {
             $require_file = $file;

@@ -14,6 +14,8 @@ class ex_class extends db_connect
     public $SERVER   = null;
     public $URI      = null;
     public $phpinput = null;
+    
+    public $method;
     public $agent;
     public $gid;
     public $debugclass;

@@ -3,32 +3,35 @@ unset($_SESSION["db_connect"]);
 
 function adddinamicsetting(&$settings)
 {
-    $dir = $_SERVER["DOCUMENT_ROOT"];
-    $exdir = $dir . "/private/settings";
-    if (!file_exists($dir . "/private")) {
-        mkdir($dir . "/private");
+    $dir   = $_SERVER["DOCUMENT_ROOT"];
+    $exdir = $dir . "/models/settings";
+    if (!file_exists($dir . "/models"))
+    {
+        mkdir($dir . "/models");
     }
-    if (!file_exists($dir . "/private" . "/settings")) {
-        mkdir($dir . "/private" . "/settings");
+    if (!file_exists($dir . "/models" . "/settings"))
+    {
+        mkdir($dir . "/models" . "/settings");
     }
     $files1 = scandir($exdir);
-    foreach ($files1 as $value) {
-        if (!in_array($value, array(".", ".."))) {
+    foreach ($files1 as $value)
+    {
+        if (!in_array($value, [ ".", ".." ]))
+        {
             $settingsjsonfile = $exdir . "/" . $value;
-
+            
             $content = file_get_contents($settingsjsonfile);
-            $json = json_decode($content, true);
-
-            if (isset($json["Info"])) {
+            $json    = json_decode($content, true);
+            
+            if (isset($json["Info"]))
+            {
                 $setsetting = [];
-                foreach ($json["Info"] as $val) {
+                foreach ($json["Info"] as $val)
+                {
                     $setsetting = array_merge($setsetting, $val);
                 }
-                if (isset($json["Name"])) {
-                    $settings[$json["Name"]] = $setsetting;
-                }
-
-                if (isset($json["Name"])) {
+                if (isset($json["Name"]))
+                {
                     $settings[$json["Name"]] = $setsetting;
                 }
             }
@@ -36,20 +39,26 @@ function adddinamicsetting(&$settings)
     }
 }
 
-$agent = explode(".", $_SERVER["HTTP_HOST"])[0];
+$agent             = explode(".", $_SERVER["HTTP_HOST"])[0];
 $settings["agent"] = $agent;
 
 //Динамическое подключение настроек
 adddinamicsetting($settings);
 
-if (isset($_SESSION["i4b"])) {
+if (isset($_SESSION["i4b"]))
+{
     $saa = $_SESSION["i4b"];
-    if (isset($saa["auth"])) {
+    if (isset($saa["auth"]))
+    {
         $settings["auth"] = $saa["auth"];
-    } else {
+    }
+    else
+    {
         $settings["auth"] = [];
     }
-} else {
+}
+else
+{
     $settings["auth"] = [];
 }
 

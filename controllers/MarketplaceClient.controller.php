@@ -92,7 +92,7 @@ class MarketplaceClient extends ex_class
             {
                 $result = $this->setsettingscomponent($param);
                 
-            };
+            }
         }
         elseif ($this->metod == "GET")
         {

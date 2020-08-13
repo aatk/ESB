@@ -1,11 +1,12 @@
 <?php
 
-class System extends ex_class
+class SystemM extends ex_class
 {
-    public function __construct($metod = "")
+    public function __construct($method = "")
     {
         $this->Patch = $_SERVER["DOCUMENT_ROOT"] . "/";
         parent::__construct(null);   //на тот случай если мы будем наследовать от класса
+        $this->method = $method;
     }
     
     public function InstallModule()

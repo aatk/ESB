@@ -26,7 +26,6 @@ if (isset($_REQUEST["q"]))
     {
         $wClass = loader($class, $metod);
         $result = $wClass->Init($param);
-        
     }
     elseif (class_exists("Pages"))
     {
@@ -38,18 +37,14 @@ if (isset($_REQUEST["q"]))
         $result['result'] = false;
         $result['error']  = "No such treatment";
         $result['msg']    = "$class";
-        
     }
 }
 elseif (class_exists("Pages"))
 {
     //станица index
-    
     $metod = $_SERVER["REQUEST_METHOD"];
-    
     $wClass = loader("Pages", $metod);
     $result = $wClass->Init([]);
-    
 }
 else
 {
