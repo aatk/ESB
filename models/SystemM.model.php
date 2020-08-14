@@ -29,10 +29,10 @@ class SystemM extends ex_class
         echo "<h1>" . $_SERVER["SERVER_NAME"] . "</h1>\r\n";
         echo "<h1>CREATE DB</h1>\r\n";
         
-        $directories = [ 'controllers', 'models', 'vendors' ];
+        $directories = [ 'controller' => 'controllers', 'model' => 'models', 'class' => 'vendors' ];
         
         /* Устанавливаем все БД */
-        foreach ($directories as $dir)
+        foreach ($directories as $key => $dir)
         {
             echo "<h2>$dir</h2>\r\n";
             $files1 = scandir($dir);
@@ -41,7 +41,7 @@ class SystemM extends ex_class
                 if (!in_array($value, [ ".", ".." ]))
                 {
                     $class = pathinfo($dir . "/" . $value);
-                    $class = (str_ireplace(".class", "", $class["filename"]));
+                    $class = (str_ireplace("." . $key, "", $class["filename"]));
                     echo "<p>Устанавливаем модуль $class</p>\r\n";
                     if (class_exists($class))
                     {
@@ -60,7 +60,7 @@ class SystemM extends ex_class
         
         echo "<h1>Install Module</h1>\r\n";
         /* Устанавливаем все преднастройки */
-        foreach ($directories as $dir)
+        foreach ($directories as $key => $dir)
         {
             echo "<h2>$dir</h2>\r\n";
             $files1 = scandir($dir);
@@ -69,7 +69,7 @@ class SystemM extends ex_class
                 if (!in_array($value, [ ".", ".." ]))
                 {
                     $class = pathinfo($dir . "/" . $value);
-                    $class = (str_ireplace(".class", "", $class["filename"]));
+                    $class = (str_ireplace(".".$key, "", $class["filename"]));
                     if (class_exists($class))
                     {
                         if (method_exists($class, 'InstallModule'))
