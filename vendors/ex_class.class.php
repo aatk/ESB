@@ -5,7 +5,7 @@
  *
  * */
 
-class ex_class extends db_connect
+class ex_class extends CRUD
 {
     public $GET      = null;
     public $FILES    = null;

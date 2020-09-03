@@ -10,7 +10,7 @@ require_once ROOT.'vendors/Medoo/Medoo.php';
 
 use Medoo\Medoo;
 
-class db_connect
+class CRUD
 {
     public  $sql_interface = null;
     private $debugclass;
