@@ -10,7 +10,7 @@ class MarketplaceClient extends ex_class
     private $username;
     private $password;
     
-    public function __construct($metod = "")
+    public function __construct($metod = "", $debug = false)
     {
         parent::__construct($_SESSION["i4b"]["connectionInfo"]);   //на тот случай если мы будем наследовать от класса
         

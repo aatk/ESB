@@ -1,11 +1,13 @@
 <?php
 
 /*
- * ver: 2.0.1
  *
+ * Для совместимости с прошлыми версиями
+ *
+ * ver: 2.0.1
  * */
 
-class ex_class extends CRUD
+abstract class ex_class extends CRUD
 {
     public $GET      = null;
     public $FILES    = null;
@@ -56,8 +58,7 @@ class ex_class extends CRUD
         
         $this->agent = $_SESSION["i4b"]["agent"];
         
-        /* Cache */
-        $metod = $_SERVER["REQUEST_METHOD"];
+        $this->method = $_SERVER["REQUEST_METHOD"];
         
         $params             = [];
         $params["GET"]      = $this->GET;
@@ -66,7 +67,6 @@ class ex_class extends CRUD
         $params["SERVER"]   = $this->SERVER;
         $params["phpinput"] = $this->phpinput;
         $params["type"]     = "run";
-        $this->cache        = new Cache($metod, $connectionInfo, $params);
     }
     
     public function WriteToSession($type, $data)

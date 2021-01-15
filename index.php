@@ -74,6 +74,10 @@ if (is_string($result))
 {
     echo $result;
 }
+elseif (is_object($result) && ($result instanceof View))
+{
+    echo $result->generate();
+}
 elseif ($result instanceof SimpleXMLElement)
 {
     header('Content-Type: text/xml; charset-utf-8');

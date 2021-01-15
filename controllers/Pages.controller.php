@@ -1,6 +1,6 @@
 <?php
 
-class Pages extends ex_class
+class Pages extends ex_class implements InstallModule, CreateDB
 {
     private $Patch;
     private $Auth;
@@ -11,15 +11,13 @@ class Pages extends ex_class
     public  $views      = "views";
     
     /* Конструктор
-    На входе
-      $connectionInfo - описание подключения к БД
       $metod - метод вызова класса GET, POST, PATCH и т.д.
     */
-    public function __construct($metod = "")
+    public function __construct($metod = "", $debug = false)
     {
-        $this->full_str = getcwd() . $this->str;
+        $this->full_str = getcwd() . $this->views;
         $this->Patch    = $_SERVER["DOCUMENT_ROOT"] . "/";
-        parent::__construct($_SESSION["i4b"]["connectionInfo"]);   //на тот случай если мы будем наследовать от класса
+        parent::__construct($_SESSION["i4b"]["connectionInfo"], $debug);   //на тот случай если мы будем наследовать от класса
         
         $this->connectionInfo = $_SESSION["i4b"]["connectionInfo"]; //Прочитаем настройки подключения к БД
         $this->metod          = $metod;
@@ -39,7 +37,6 @@ class Pages extends ex_class
         }
     }
     
-    /* Функция для установки нужны таблиц для класса */
     public function CreateDB()
     {
         /* Описание таблиц для работы с пользователями*/
@@ -74,6 +71,8 @@ class Pages extends ex_class
         $connectionInfo = $_SESSION["i4b"]["connectionInfo"];
         $this->create($connectionInfo['database_type'], $info);
     }
+    
+    
     
     public function ListImages($Params)
     {

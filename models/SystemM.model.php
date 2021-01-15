@@ -1,17 +1,17 @@
 <?php
 
-class SystemM extends ex_class
+class SystemM extends extend_controller implements InstallModule
 {
-    public function __construct($method = "")
+    public function __construct($method = "", $debug = false)
     {
         $this->Patch = $_SERVER["DOCUMENT_ROOT"] . "/";
-        parent::__construct(null);   //на тот случай если мы будем наследовать от класса
+        parent::__construct();   //на тот случай если мы будем наследовать от класса
         $this->method = $method;
     }
     
     public function InstallModule()
     {
-        $dirlist = [ "controllers", "models", "vendors", "tmp" ];
+        $dirlist = [ "controllers", "interfaces", "models", "vendors", "tmp" ];
         foreach ($dirlist as $dir)
         {
             if (!file_exists($dir))
@@ -23,6 +23,7 @@ class SystemM extends ex_class
     
     public function UpdateSystem()
     {
+        //TODO переделать под новый стандарт
         ob_start();
         
         echo "<h1>START INSTALL</h1>\r\n";
@@ -45,7 +46,7 @@ class SystemM extends ex_class
                     echo "<p>Устанавливаем модуль $class</p>\r\n";
                     if (class_exists($class))
                     {
-                        if (method_exists($class, 'CreateDB'))
+                        if ($class instanceof CreateDB)
                         {
                             $newobject = loader($class);
                             $newobject->CreateDB();
@@ -72,7 +73,7 @@ class SystemM extends ex_class
                     $class = (str_ireplace(".".$key, "", $class["filename"]));
                     if (class_exists($class))
                     {
-                        if (method_exists($class, 'InstallModule'))
+                        if ($class instanceof InstallModule)
                         {
                             echo "<p>Настраиваем модуль $class</p>\r\n";
                             $newobject = loader($class);

@@ -8,7 +8,11 @@ function loader($class, $metod = "")
     {
         return new $class();
     }
-    else
+    elseif ($class instanceof extend_controller)
+    {
+        return new $class();
+    }
+    elseif ($class instanceof ex_class)
     {
         return new $class($metod);
     }
@@ -47,7 +51,7 @@ function class_autoload($class_name)
     if ($require_file == "")
     {
         $file = ROOT . 'controllers/' . $class_name . '.controller.php';
-        if (file_exists($file) != false)
+        if (file_exists($file) !== false)
         {
             $require_file = $file;
         }
@@ -56,7 +60,7 @@ function class_autoload($class_name)
     if ($require_file == "")
     {
         $file = ROOT . 'models/' . $class_name . '.model.php';
-        if (file_exists($file) != false)
+        if (file_exists($file) !== false)
         {
             $require_file = $file;
         }
@@ -65,7 +69,16 @@ function class_autoload($class_name)
     if ($require_file == "")
     {
         $file = ROOT . 'vendors/' . $class_name . '.class.php';
-        if (file_exists($file) != false)
+        if (file_exists($file) !== false)
+        {
+            $require_file = $file;
+        }
+    }
+    
+    if ($require_file == "")
+    {
+        $file = ROOT . 'interfaces/' . $class_name . '.interface.php';
+        if (file_exists($file) !== false)
         {
             $require_file = $file;
         }

@@ -1,6 +1,6 @@
 <?php
 
-class Cloud extends ex_class
+class Cloud extends ex_class implements CreateDB
 {
     private $connectionInfo;
     private $metod;
@@ -14,11 +14,6 @@ class Cloud extends ex_class
         
         $this->metod   = $metod;
         $this->dirname = "cloudfiles";
-    }
-    
-    public function SetDirname($dirname)
-    {
-        $this->dirname = $dirname;//"democloud";
     }
     
     public function CreateDB()
@@ -55,6 +50,12 @@ class Cloud extends ex_class
         ];
         
         $res = $this->create($this->connectionInfo['database_type'], $info);
+    }
+    
+    
+    public function SetDirname($dirname)
+    {
+        $this->dirname = $dirname;//"democloud";
     }
     
     /**

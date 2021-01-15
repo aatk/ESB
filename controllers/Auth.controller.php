@@ -1,11 +1,11 @@
 <?php
 
-class Auth extends ex_class
+class Auth extends ex_class implements InstallModule, CreateDB
 {
     private $metod;
     private $connectionInfo;
     
-    public function __construct($metod = "")
+    public function __construct($metod = "", $debug = false)
     {
         parent::__construct($_SESSION["i4b"]["connectionInfo"]);   //на тот случай если мы будем наследовать от класса
         
@@ -24,7 +24,6 @@ class Auth extends ex_class
         }
     }
     
-    /* Функция для установки нужны таблиц для класса */
     public function CreateDB()
     {
         /* Описание таблиц для работы с пользователями*/
@@ -165,6 +164,8 @@ class Auth extends ex_class
             }
         }
     }
+    
+    
     
     public function Init($param)
     {

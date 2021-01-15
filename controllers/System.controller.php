@@ -4,7 +4,7 @@ class System extends ex_class
 {
     private $SystemM;
     
-    public function __construct($method = "")
+    public function __construct($method = "", $debug = false)
     {
         $this->SystemM = new SystemM($method);
         $this->Patch = $_SERVER["DOCUMENT_ROOT"] . "/";

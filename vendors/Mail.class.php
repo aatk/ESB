@@ -61,13 +61,13 @@ class Mail extends ex_class
         $this->create($this->connectionInfo['database_type'], $info);
     }
     
-    public function __construct($metod = "")
+    public function __construct($metod = "", $debug = false)
     {
         
         $this->connectionInfo = $_SESSION["i4b"]["connectionInfo"];
         $this->ApMailerConfig = $_SESSION["i4b"]['MailerConfig'];
         
-        parent::__construct($this->connectionInfo);   //на тот случай если мы будем наследовать от класса
+        parent::__construct($this->connectionInfo, $debug);   //на тот случай если мы будем наследовать от класса
         
     }
     
