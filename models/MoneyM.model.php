@@ -20,7 +20,7 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
         
         $info["Money_wallet"] = [
             "id"          => [ 'type' => 'int(11)', 'null' => 'NOT NULL', 'inc' => true ],
-            "balance"     => [ 'type' => 'float', 'null' => 'NOT NULL' ],
+            "balance"     => [ 'type' => 'double', 'null' => 'NOT NULL' ],
             "id_currency" => [ 'type' => 'int(11)', 'null' => 'NOT NULL' ],
         ];
         
@@ -32,10 +32,10 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
         
         $info["Money_wallet_history"] = [
             "stamp"    => [ 'type' => 'timestamp', 'null' => 'NOT NULL' ],
-            "datetime" => [ 'type' => 'datetime', 'null' => 'NOT NULL' ],
+            "datetime" => [ 'type' => 'date', 'null' => 'NOT NULL' ],
             
             "id_wallet" => [ 'type' => 'int(11)', 'null' => 'NOT NULL' ],
-            "amount"    => [ 'type' => 'float', 'null' => 'NOT NULL' ],
+            "amount"    => [ 'type' => 'double', 'null' => 'NOT NULL' ],
             
             "id_currency"        => [ 'type' => 'int(11)', 'null' => 'NOT NULL' ],
             "amount_in_currency" => [ 'type' => 'float', 'null' => 'NOT NULL' ],

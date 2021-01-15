@@ -43,15 +43,16 @@ class SystemM extends extend_controller implements InstallModule
                 {
                     $class = pathinfo($dir . "/" . $value);
                     $class = (str_ireplace("." . $key, "", $class["filename"]));
-                    echo "<p>Устанавливаем модуль $class</p>\r\n";
                     if (class_exists($class))
                     {
-                        if ($class instanceof CreateDB)
+                        $implements = class_implements($class);
+                        if (in_array('CreateDB', $implements))
                         {
+                            echo "<p>Устанавливаем модуль $class</p>\r\n";
                             $newobject = loader($class);
                             $newobject->CreateDB();
+                            echo "<p>Закончили с $class</p>\r\n";
                         }
-                        echo "<p>Закончили с $class</p>\r\n";
                     }
                     
                 }
@@ -73,10 +74,10 @@ class SystemM extends extend_controller implements InstallModule
                     $class = (str_ireplace(".".$key, "", $class["filename"]));
                     if (class_exists($class))
                     {
-                        if ($class instanceof InstallModule)
+                        $newobject = loader($class);
+                        if ($newobject instanceof InstallModule)
                         {
                             echo "<p>Настраиваем модуль $class</p>\r\n";
-                            $newobject = loader($class);
                             $newobject->InstallModule();
                         }
                     }

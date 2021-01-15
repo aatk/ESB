@@ -1,0 +1,26 @@
+{
+    "Name": "connectionInfo",
+    "Info": [
+        {
+            "database_type": "mysql"
+        },
+        {
+            "server": "localhost"
+        },
+        {
+            "database_name": "money_demo"
+        },
+        {
+            "username": "money_demo"
+        },
+        {
+            "password": "money_demo"
+        },
+        {
+            "charset": "utf8"
+        },
+        {
+            "port": "8889"
+        }
+    ]
+}

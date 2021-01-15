@@ -4,18 +4,7 @@ define('ROOT', dirname(__FILE__) . '/');
 
 function loader($class, $metod = "")
 {
-    if ($metod == "")
-    {
-        return new $class();
-    }
-    elseif ($class instanceof extend_controller)
-    {
-        return new $class();
-    }
-    elseif ($class instanceof ex_class)
-    {
-        return new $class($metod);
-    }
+    return new $class();
 }
 
 function mb_ucfirst($str, $encoding = 'UTF-8')
