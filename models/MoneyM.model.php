@@ -2,6 +2,8 @@
 
 class MoneyM extends extend_model implements CreateDB, InstallModule
 {
+    private $TransactionData;
+    
     public function CreateDB()
     {
         //USD, RUB
@@ -62,17 +64,68 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
     {
         parent::__construct();
     }
-
     
     public function get_currency_id($currency_name)
     {
-        $id_array = $this->get("Money_currency", ["id"], ["name" => $currency_name]);
+        $id_array = $this->get("Money_currency", [ "id" ], [ "name" => $currency_name ]);
+        
         return $id_array["id"];
     }
     
-    public function change_balance($id_wallet, $amount, $currency, $reason)
+    public function get_currency_history($currency_id, $time)
     {
+        $date = date('Y-m-d', $time);
+        $max_date = $this->max("Money_currency_history", "date", [
+            "date[<=]" => $date
+        ]);
     
+        $data = $this->get("Money_currency_history" , ["price"], ["id_currency"=> $currency_id, "date" => $max_date]);
+        return $data["price"] ?? 1;
+    }
+    
+    
+    
+    public function change_balance($id_wallet, $amount_in_currency, $currency_id, $reason)
+    {
+        $datetime = time();
+        
+        $amount = $amount_in_currency;
+        $data_wallet = $this->get("Money_wallet", ["id_currency"], ["id" => $id_wallet]);
+        if ($data_wallet["id_currency"] !== $currency_id)
+        {
+            $price = $this->get_currency_history($currency_id, $datetime);
+            if ($data_wallet["id_currency"] == 643) {
+                $amount = $amount_in_currency*$price;
+            } else {
+                $amount = $amount_in_currency/$price;
+            }
+        }
+        
+        $this->TransactionData = [
+            "datetime"           => $datetime,
+            "id_wallet"          => $id_wallet,
+            "amount"             => $amount,
+            "id_currency"        => $currency_id,
+            "amount_in_currency" => $amount_in_currency,
+            "reason"             => $reason,
+        ];
+        
+        //Начало транзакции
+        $this->action(function ($database)
+        {
+            $data = $this->TransactionData;
+            $database->insert("Money_wallet_history", $data);
+            
+            $data_wallet = [
+                "balance[+]" => $data["amount"],
+            ];
+            $database->update("Money_wallet", $data_wallet, [ "id" => $data["id_wallet"] ]);
+        });
+        //Конец транзакции
+        
+        $result = $this->error();
+        
+        return $result;
     }
     
     public function get_balance($id_wallet)
@@ -87,6 +140,14 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
             ],
             [ "id" => $id_wallet ]
         );
+        
+        return $res;
+    }
+    
+    public function get_last_refunds($id_wallet)
+    {
+        $sql = "";
+        $res = $this->query($sql);
         
         return $res;
     }

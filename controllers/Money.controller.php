@@ -61,6 +61,13 @@ class Money extends extend_controller
     
     public function get_last_refunds($params)
     {
+        $result = [];
+        $id_wallet = $params[1] ?? 0;
     
+        if ($id_wallet != 0) {
+            $result = $this->Model->get_last_refunds($id_wallet);
+        }
+    
+        return new MoneyV($result);
     }
 }
