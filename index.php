@@ -8,29 +8,29 @@ header('Access-Control-Allow-Origin: *');
 //Если надо обновить все настройки и таблицы, сделайте пустой php с $System->UpdateSystem();
 
 require_once 'autoload.php'; //подключаем автозагрузку доп.классов
-session_start(); //Стартуем сессию только после подключения библиотек
+session_start(); //Стартуем сессию только после подключения библиотек и автолоадера
 require_once 'settings.php'; //подключаем настройки
 
 //Основной приниающий файл REST API
 if (isset($_REQUEST["q"]))
 {
-    $metod = $_SERVER["REQUEST_METHOD"];
-    $q     = $_REQUEST["q"];
+    $method = $_SERVER["REQUEST_METHOD"];
+    $q      = $_REQUEST["q"];
     unset($_REQUEST["q"]);
     $res = explode("/", $q);
     
     $class = clean_classname($res[0]);
-    $param = array_slice($res, 1);
     
-    if (class_exists($class))
+    if (class_exists("Routh"))
     {
-        $wClass = loader($class, $metod);
-        $result = $wClass->Init($param);
-    }
-    elseif (class_exists("Pages"))
-    {
-        $wClass = loader("Pages", $metod);
+        $wClass = loader("Routh");
         $result = $wClass->Init($res);
+    }
+    elseif (class_exists($class))
+    {
+        $wClass = loader($class);
+        $param = array_slice($res, 1);
+        $result = $wClass->Init($param);
     }
     else
     {
@@ -38,13 +38,6 @@ if (isset($_REQUEST["q"]))
         $result['error']  = "No such treatment";
         $result['msg']    = "$class";
     }
-}
-elseif (class_exists("Pages"))
-{
-    //станица index
-    $metod = $_SERVER["REQUEST_METHOD"];
-    $wClass = loader("Pages", $metod);
-    $result = $wClass->Init([]);
 }
 else
 {

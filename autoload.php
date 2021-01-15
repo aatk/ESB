@@ -66,6 +66,15 @@ function class_autoload($class_name)
     
     if ($require_file == "")
     {
+        $file = ROOT . 'views/' . $class_name . '.view.php';
+        if (file_exists($file) !== false)
+        {
+            $require_file = $file;
+        }
+    }
+
+    if ($require_file == "")
+    {
         $file = ROOT . 'interfaces/' . $class_name . '.interface.php';
         if (file_exists($file) !== false)
         {

@@ -74,10 +74,11 @@ class SystemM extends extend_controller implements InstallModule
                     $class = (str_ireplace(".".$key, "", $class["filename"]));
                     if (class_exists($class))
                     {
-                        $newobject = loader($class);
-                        if ($newobject instanceof InstallModule)
+                        $implements = class_implements($class);
+                        if (in_array('InstallModule', $implements))
                         {
                             echo "<p>Настраиваем модуль $class</p>\r\n";
+                            $newobject = loader($class);
                             $newobject->InstallModule();
                         }
                     }

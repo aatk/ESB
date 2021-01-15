@@ -49,6 +49,21 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
     
     public function InstallModule()
     {
+
+        $sql = "ALTER TABLE `Money_currency`
+                  ADD PRIMARY KEY (`id`),
+                  ADD KEY `name` (`name`);
+                
+                ALTER TABLE `Money_currency_history`
+                  ADD KEY `date` (`date`),
+                  ADD KEY `id_currency` (`id_currency`),
+                  ADD KEY `date_2` (`date`,`id_currency`);
+    
+                ALTER TABLE `Money_wallet_history`
+                  ADD UNIQUE KEY `stamp` (`stamp`);";
+        $this->query($sql);
+    
+    
         //Заполняем валюты
         if (!$this->has("Money_currency", [ "name" => "USD" ]))
         {
@@ -130,15 +145,16 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
     
     public function get_balance($id_wallet)
     {
-        $res = $this->get("Money_wallet",
+        $res = $this->get("Money_wallet(wallet)",
             [
-                "[>]Money_currency(currency)" => [ "id_currency" => "id" ],
+                "[>]Money_currency(currency)" => [ "wallet.id_currency" => "id" ],
             ], [
-                "id",
-                "balance",
-                "currency.name",
+                "wallet.id",
+                "wallet.balance",
+                "wallet.id_currency",
+                "currency.name(name_currency)",
             ],
-            [ "id" => $id_wallet ]
+            [ "wallet.id" => $id_wallet ]
         );
         
         return $res;

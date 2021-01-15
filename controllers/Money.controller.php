@@ -17,6 +17,33 @@ class Money extends extend_controller
         $this->Model = new MoneyM();
     }
     
+    public function Init($params)
+    {
+        $result           = [];
+        $result["result"] = false;
+        $result["error"]  = "Error function call";
+    
+        $func = strtolower($params[0]);
+    
+        if ($this->method == "GET")
+        {
+            if ($func == "change_balance")
+            {
+                $result = $this->change_balance($params);
+            }
+            elseif ($func == "get_balance")
+            {
+                $result = $this->get_balance($params);
+            }
+            elseif ($func == "get_last_refunds")
+            {
+                $result = $this->get_last_refunds($params);
+            }
+        }
+    
+        return $result;
+    }
+    
     public function change_balance($params)
     {
         $result = [];
