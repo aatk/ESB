@@ -38,4 +38,16 @@ SQL запрос
 * Пользователя MySql с логином и паролем money_demo и правами на изменение БД money_demo 
   * изменить данные подключения к БД можно в файле models/settings/connectionInfo.json
 * сделать клон ветки 
-  * git clone https://github.com/aatk/ESB/tree/money_demo
+  * git clone https://github.com/aatk/ESB.git && cd ESB && git checkout money_demo
+* Запустить на веб сервере (localhost или по настройке apache) http://localhost/System/updatesystem (Обновление системы, первоначальная настройка)
+* Баланс пользователя "1" кошелек в рублях - http://localhost/Money/get_balance/1
+* Баланс пользователя "2" кошелек в долларах - http://localhost/Money/get_balance/2
+* Пополнить баланс пользователя "1" на 100 Рублей - http://localhost/Money/change_balance/1/debit/100/RUB/refund
+* Снять с баланса пользователя "1" 50 Рублей - http://localhost/Money/change_balance/1/credit/50/RUB/stock
+* Пополнить баланс пользователя "1" на 100 Долларов - http://localhost/Money/change_balance/1/debit/100/USD/refund
+* Снять с баланса пользователя "1" 10 Долларов - http://localhost/Money/change_balance/1/credit/10/USD/stock
+* Пополнить баланс пользователя "2" на 1000 Рублей - http://localhost/Money/change_balance/2/debit/1000/RUB/refund
+* Снять с баланса пользователя "2" 500 Рублей - http://localhost/Money/change_balance/2/credit/500/RUB/stock
+* Пополнить баланс пользователя "2" на 1000 Долларов - http://localhost/Money/change_balance/2/debit/1000/USD/refund
+* Снять с баланса пользователя "2" 100 Долларов - http://localhost/Money/change_balance/2/credit/100/USD/stock
+* Просмотреть сумму всех операций refund за 7 дней - http://localhost/Money/get_last_refunds/
