@@ -53,3 +53,8 @@ SQL запрос
 * Пополнить баланс пользователя "2" на 1000 Долларов - http://localhost/Money/change_balance/2/debit/1000/USD/refund
 * Снять с баланса пользователя "2" 100 Долларов - http://localhost/Money/change_balance/2/credit/100/USD/stock
 * Просмотреть сумму всех операций refund за 7 дней - http://localhost/Money/get_last_refunds/
+# Расположение данных по папкам
+1. Контроллер Money - controllers/Money.controller.php (Принимающий файл для сервисов)
+2. Модель контроллера - models/MoneyM.model.php (Подключения к БД)
+3. View контроллера - views/MoneyV.view.php
+4. Настройки подключения к БД - models/settings/connectionInfo.json
