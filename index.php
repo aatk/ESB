@@ -48,21 +48,24 @@ else
 
 unset($_SESSION["db_connect"]); // удаляем из сессии класс с базой
 
-if ((isset($result["result"]) && ($result["result"] === false)) || ($result === false))
-{
-    $code    = 500;
-    $message = "Internal Server Error";
-    if (isset($result["errorinfo"]))
-    {
-        $code    = $result["errorinfo"]["code"];
-        $message = $result["errorinfo"]["message"];
-    };
-    
-    $header_text = 'HTTP/1.1 ' . $code . ' ' . $message;
-    header($header_text);
-}
 
 //Выводим результат и благополучно выходим
+if (is_array($result)) {
+    if ((isset($result["result"]) && ($result["result"] === false)) || ($result === false))
+    {
+        $code    = 500;
+        $message = "Internal Server Error";
+        if (isset($result["errorinfo"]))
+        {
+            $code    = $result["errorinfo"]["code"];
+            $message = $result["errorinfo"]["message"];
+        }
+        
+        $header_text = 'HTTP/1.1 ' . $code . ' ' . $message;
+        header($header_text);
+    }
+}
+
 if (is_string($result))
 {
     echo $result;
@@ -78,7 +81,7 @@ elseif ($result instanceof SimpleXMLElement)
 }
 elseif (is_bool($result) && !$result)
 {
-    if ($result)
+    if (!$result)
     {
         $header_text = 'HTTP/1.1 500 False return';
     }

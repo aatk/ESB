@@ -31,16 +31,14 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
         ];
         
         $info["Money_wallet_history"] = [
-            "stamp"    => [ 'type' => 'timestamp', 'null' => 'NOT NULL' ],
-            "datetime" => [ 'type' => 'date', 'null' => 'NOT NULL' ],
-            
-            "id_wallet" => [ 'type' => 'int(11)', 'null' => 'NOT NULL' ],
-            "amount"    => [ 'type' => 'double', 'null' => 'NOT NULL' ],
-            
+            "stamp"              => [ 'type' => 'timestamp', 'null' => 'NOT NULL' ],
+            "date"               => [ 'type' => 'date', 'null' => 'NOT NULL' ],
+            "id_wallet"          => [ 'type' => 'int(11)', 'null' => 'NOT NULL' ],
+            "amount"             => [ 'type' => 'double', 'null' => 'NOT NULL' ],
             "id_currency"        => [ 'type' => 'int(11)', 'null' => 'NOT NULL' ],
-            "amount_in_currency" => [ 'type' => 'float', 'null' => 'NOT NULL' ],
-            
-            "reason" => [ 'type' => 'varchar(10)', 'null' => 'NOT NULL' ],
+            "amount_in_currency" => [ 'type' => 'double', 'null' => 'NOT NULL' ],
+            "amount_in_RUB"      => [ 'type' => 'double', 'null' => 'NOT NULL' ],
+            "reason"             => [ 'type' => 'varchar(10)', 'null' => 'NOT NULL' ],
         ];
         
         $connectionInfo = $_SESSION["i4b"]["connectionInfo"];
@@ -49,7 +47,7 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
     
     public function InstallModule()
     {
-
+        
         $sql = "ALTER TABLE `Money_currency`
                   ADD PRIMARY KEY (`id`),
                   ADD KEY `name` (`name`);
@@ -60,10 +58,12 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
                   ADD KEY `date_2` (`date`,`id_currency`);
     
                 ALTER TABLE `Money_wallet_history`
-                  ADD UNIQUE KEY `stamp` (`stamp`);";
+                  ADD UNIQUE KEY `stamp` (`stamp`);
+                  ADD KEY `reason` (`reason`),
+                  ADD KEY `datetime` (`date`,`reason`);";
         $this->query($sql);
-    
-    
+        
+        
         //Заполняем валюты
         if (!$this->has("Money_currency", [ "name" => "USD" ]))
         {
@@ -84,45 +84,55 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
     {
         $id_array = $this->get("Money_currency", [ "id" ], [ "name" => $currency_name ]);
         
-        return $id_array["id"];
+        return $id_array["id"] ?? 0;
     }
     
     public function get_currency_history($currency_id, $time)
     {
-        $date = date('Y-m-d', $time);
+        $date     = date('Y-m-d', $time);
         $max_date = $this->max("Money_currency_history", "date", [
-            "date[<=]" => $date
+            "date[<=]" => $date,
         ]);
-    
-        $data = $this->get("Money_currency_history" , ["price"], ["id_currency"=> $currency_id, "date" => $max_date]);
-        return $data["price"] ?? 1;
+        
+        $data = $this->get("Money_currency_history", [ "price" ], [
+            "id_currency" => $currency_id,
+            "date"        => $max_date,
+        ]);
+        
+        return (float)$data["price"] ?? 1;
     }
-    
-    
     
     public function change_balance($id_wallet, $amount_in_currency, $currency_id, $reason)
     {
         $datetime = time();
         
-        $amount = $amount_in_currency;
-        $data_wallet = $this->get("Money_wallet", ["id_currency"], ["id" => $id_wallet]);
-        if ($data_wallet["id_currency"] !== $currency_id)
+        $amount_in_RUB      = $amount = $amount_in_currency;
+        $data_wallet        = $this->get("Money_wallet", [ "id_currency" ], [ "id" => $id_wallet ]);
+        $wallet_currency_id = $data_wallet["id_currency"];
+        
+        if ($wallet_currency_id != $currency_id)
         {
-            $price = $this->get_currency_history($currency_id, $datetime);
-            if ($data_wallet["id_currency"] == 643) {
-                $amount = $amount_in_currency*$price;
-            } else {
-                $amount = $amount_in_currency/$price;
+            if ($wallet_currency_id == 643)
+            {
+                $price         = $this->get_currency_history($currency_id, $datetime);
+                $amount_in_RUB = $amount = $amount_in_currency * $price;
+            }
+            else
+            {
+                $price  = $this->get_currency_history($data_wallet["id_currency"], $datetime);
+                $amount = $amount_in_currency / $price;
             }
         }
         
         $this->TransactionData = [
-            "datetime"           => $datetime,
+            "date"               => date("Y-m-d", $datetime),
             "id_wallet"          => $id_wallet,
-            "amount"             => $amount,
-            "id_currency"        => $currency_id,
             "amount_in_currency" => $amount_in_currency,
+            "id_currency"        => $currency_id,
             "reason"             => $reason,
+
+            "amount"             => $amount,
+            "amount_in_RUB"      => $amount_in_RUB,
         ];
         
         //Начало транзакции
@@ -160,11 +170,15 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
         return $res;
     }
     
-    public function get_last_refunds($id_wallet)
+    public function get_last_refunds($reason)
     {
-        $sql = "";
-        $res = $this->query($sql);
+        $date = strtotime('-7 days');
+        $datesql = date('Y-m-d', $date);
+
+        $sql = "SELECT SUM(`amount_in_RUB`) FROM `Money_wallet_history` WHERE `reason` = 'refund' AND `date` >= $datesql";
+        $res = $this->query($sql)->fetchAll();
+        $result = $res[0][0] ?? 0;
         
-        return $res;
+        return ["amount" => $result];
     }
 }

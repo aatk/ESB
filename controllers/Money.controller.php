@@ -4,10 +4,18 @@ class Money extends extend_controller
 {
     const MONEY_STOCK  = "stock";
     const MONEY_REFUND = "refund";
-    
+    const REASON = [
+        self::MONEY_STOCK,
+        self::MONEY_REFUND
+    ];
+
     const MONEY_TYPE_DEBIT  = "debit";
     const MONEY_TYPE_CREDIT = "credit";
-
+    const TYPES = [
+        self::MONEY_TYPE_DEBIT,
+        self::MONEY_TYPE_CREDIT
+        ];
+    
     private $Model;
     
     public function __construct()
@@ -46,11 +54,12 @@ class Money extends extend_controller
     
     public function change_balance($params)
     {
-        $result = [];
+        
+        $result = ["result" => false];
         
         $id_wallet = $params[1] ?? 0;
         $type      = $params[2] ?? self::MONEY_TYPE_DEBIT;
-        $amount    = $params[3] ?? 0;
+        $amount    = (double)$params[3] ?? 0;
         $currency  = $params[4] ?? "";
         $reason    = $params[5] ?? self::MONEY_STOCK;
         
@@ -66,8 +75,21 @@ class Money extends extend_controller
             $currency_id = $this->Model->get_currency_id($currency);
         }
         
-        if ($id_wallet != 0) {
+        //All ok?
+        if (
+            ($id_wallet != 0) &&
+            (in_array($type, self::TYPES)) &&
+            ($amount != 0) &&
+            ($currency_id != 0) &&
+            (in_array($reason, self::REASON))
+        )  {
+            //Всё заполнено
             $result = $this->Model->change_balance($id_wallet, $amount, $currency_id, $reason);
+            if (is_array($result) && ($result[0] === "00000"))
+            {
+                //Ошибок нет
+                $result = ["result" => true];
+            }
         }
         
         return new MoneyV($result);
@@ -75,7 +97,7 @@ class Money extends extend_controller
     
     public function get_balance($params)
     {
-        $result = [];
+        $result = ["result" => false];
         
         $id_wallet = $this->DTV($params, [ "1" ], 0);
         if ($id_wallet <> 0)
@@ -88,12 +110,7 @@ class Money extends extend_controller
     
     public function get_last_refunds($params)
     {
-        $result = [];
-        $id_wallet = $params[1] ?? 0;
-    
-        if ($id_wallet != 0) {
-            $result = $this->Model->get_last_refunds($id_wallet);
-        }
+        $result = $this->Model->get_last_refunds(self::MONEY_REFUND);
     
         return new MoneyV($result);
     }
