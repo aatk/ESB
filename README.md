@@ -1,2 +1,5 @@
 # ESB
-TEST TWIG INCLUDE TO FRAMEWORK
+Демонстрация подключения TWIG к фреймворку
+К данному фреймворку возможно подключить любую библиотеку
+
+Документация Twig https://twig.symfony.com/
