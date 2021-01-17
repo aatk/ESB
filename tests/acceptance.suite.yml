@@ -7,7 +7,10 @@
 actor: AcceptanceTester
 modules:
     enabled:
-        - PhpBrowser:
-            url: http://host-8:8888/Myapp
-        - \Helper\Acceptance
-step_decorators: ~        
+      - \Helper\Acceptance
+#        - PhpBrowser:
+#            url: http://host-8:8888/Myapp
+      - WebDriver:
+            url: 'http://host-8:8888/Myapp'
+            browser: chrome
+step_decorators: ~

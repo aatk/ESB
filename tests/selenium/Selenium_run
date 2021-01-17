@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "Переходим в папку Selenium";
+echo "cd selenium"
+cd /Users/aleksandr/PhpstormProjects/ESB_money/tests/selenium/
+
+echo "Запускаю силениум";
+echo "java -Dwebdriver.chrome.driver=chromedriver_87 -jar selenium-server-standalone-3.141.59.jar"
+java -Dwebdriver.chrome.driver=chromedriver_87 -jar selenium-server-standalone-3.141.59.jar

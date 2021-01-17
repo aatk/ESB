@@ -1,0 +1,20 @@
+{
+  "capabilities":
+      [
+        {
+          "browserName": "firefox",
+          "maxInstances": 15,
+          "seleniumProtocol": "WebDriver"
+        },
+        {
+          "browserName": "chrome",
+          "maxInstances": 15,
+          "seleniumProtocol": "WebDriver"
+        },
+        {
+          "browserName": "safari",
+          "maxInstances": 15,
+          "seleniumProtocol": "WebDriver"
+        }
+      ]
+}
