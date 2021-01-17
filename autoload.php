@@ -4,14 +4,7 @@ define('ROOT', dirname(__FILE__) . '/');
 
 function loader($class, $metod = "")
 {
-    if ($metod == "")
-    {
-        return new $class();
-    }
-    else
-    {
-        return new $class($metod);
-    }
+    return new $class();
 }
 
 function mb_ucfirst($str, $encoding = 'UTF-8')
@@ -47,7 +40,7 @@ function class_autoload($class_name)
     if ($require_file == "")
     {
         $file = ROOT . 'controllers/' . $class_name . '.controller.php';
-        if (file_exists($file) != false)
+        if (file_exists($file) !== false)
         {
             $require_file = $file;
         }
@@ -56,7 +49,7 @@ function class_autoload($class_name)
     if ($require_file == "")
     {
         $file = ROOT . 'models/' . $class_name . '.model.php';
-        if (file_exists($file) != false)
+        if (file_exists($file) !== false)
         {
             $require_file = $file;
         }
@@ -65,7 +58,25 @@ function class_autoload($class_name)
     if ($require_file == "")
     {
         $file = ROOT . 'vendors/' . $class_name . '.class.php';
-        if (file_exists($file) != false)
+        if (file_exists($file) !== false)
+        {
+            $require_file = $file;
+        }
+    }
+    
+    if ($require_file == "")
+    {
+        $file = ROOT . 'views/' . $class_name . '.view.php';
+        if (file_exists($file) !== false)
+        {
+            $require_file = $file;
+        }
+    }
+
+    if ($require_file == "")
+    {
+        $file = ROOT . 'interfaces/' . $class_name . '.interface.php';
+        if (file_exists($file) !== false)
         {
             $require_file = $file;
         }

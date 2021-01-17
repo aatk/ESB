@@ -7,7 +7,7 @@
  */
 
 
-class extend_model extends CRUD
+abstract class extend_model extends CRUD
 {
     private $curlheader;
     

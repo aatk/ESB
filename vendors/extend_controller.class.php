@@ -7,17 +7,18 @@
  */
 
 
-class extend_controller
+abstract class extend_controller implements Controller
 {
-    public $GET      = null;
-    public $FILES    = null;
-    public $POST     = null;
-    public $REQUEST  = null;
-    public $SERVER   = null;
-    public $URI      = null;
-    public $phpinput = null;
+    public $GET      = [];
+    public $FILES    = [];
+    public $POST     = [];
+    public $REQUEST  = [];
+    public $SERVER   = [];
+    public $URI      = [];
+    public $phpinput = [];
     
     public $debugclass;
+    public $method;
 
     public function DTV($jsonarray, $inattr, $defresult = "", $dateformatfrom = "", $dateformatto = "YmdHis")
     {
@@ -94,6 +95,7 @@ class extend_controller
         if ($this->DTV($this->REQUEST, ["debug"], false)) {
             $this->debugclass = true;
         }
-    
+
+        $this->method          = $_SERVER["REQUEST_METHOD"];
     }
 }

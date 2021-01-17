@@ -45,21 +45,4 @@ $settings["agent"] = $agent;
 //Динамическое подключение настроек
 adddinamicsetting($settings);
 
-if (isset($_SESSION["i4b"]))
-{
-    $saa = $_SESSION["i4b"];
-    if (isset($saa["auth"]))
-    {
-        $settings["auth"] = $saa["auth"];
-    }
-    else
-    {
-        $settings["auth"] = [];
-    }
-}
-else
-{
-    $settings["auth"] = [];
-}
-
 $_SESSION["i4b"] = $settings;
