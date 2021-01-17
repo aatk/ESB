@@ -5,7 +5,7 @@
  *
  *
  */
-class Cache extends db_connect
+class Cache extends CRUD
 {
 
     private $metod;

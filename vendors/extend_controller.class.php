@@ -16,7 +16,8 @@ class extend_controller
     public $SERVER   = null;
     public $URI      = null;
     public $phpinput = null;
-    
+
+    public $method;
     public $debugclass;
 
     public function DTV($jsonarray, $inattr, $defresult = "", $dateformatfrom = "", $dateformatto = "YmdHis")
@@ -80,7 +81,7 @@ class extend_controller
         return $result;
     }
     
-    public function __construct()
+    public function __construct($method)
     {
         $this->GET      = $_GET;
         $this->POST     = $_POST;
@@ -90,6 +91,8 @@ class extend_controller
         $this->URI      = explode("/", $_SERVER["REQUEST_URI"]);
         $this->phpinput = file_get_contents("php://input");
     
+        $this->method = $method;
+        
         $this->debugclass = false;
         if ($this->DTV($this->REQUEST, ["debug"], false)) {
             $this->debugclass = true;
