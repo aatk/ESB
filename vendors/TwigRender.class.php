@@ -2,16 +2,16 @@
 
 require_once ROOT . 'vendor/autoload.php';
 
-class TwigRender extends extend_controller
+class TwigRender extends extend_view
 {
-    public function __construct($method)
-    {
-        parent::__construct($method);
-    }
     
-    public function Init($Params)
+    public function generate()
     {
-        return $this->Show('Hello {{ name }} {% include "template" %}', ["name" => "TEST"]);
+        $html = $this->object["html"];
+        $params = $this->object["params"];
+    
+        //echo $this->Show('Hello {{ name }} {% include "template" %}', ["name" => "TEST"]);
+        echo $this->Show($html, $params);
     }
     
     public function Show($text, $params = [])
