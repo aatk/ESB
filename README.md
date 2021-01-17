@@ -37,7 +37,7 @@ SQL запрос
 * Создать базу данных money_demo на сервере localhost
 * Пользователя MySql с логином и паролем money_demo и правами на изменение БД money_demo 
   * изменить данные подключения к БД можно в файле models/settings/connectionInfo.json
-* сделать клон ветки, запустить из командной 
+* сделать клон ветки, запустить из командной строки
   * git clone https://github.com/aatk/ESB.git && cd ESB && git checkout money_demo
 * Веб сервер настроить на папку ESB, куда склонировалась ветка 
 * Запустить на веб сервере (localhost или по настройке apache) http://localhost/System/updatesystem (Обновление системы, первоначальная настройка)

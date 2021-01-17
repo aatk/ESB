@@ -15,7 +15,7 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
         $info["Money_currency_history"] = [
             "date"        => [ 'type' => 'date', 'null' => 'NOT NULL' ],
             "id_currency" => [ 'type' => 'int(11)', 'null' => 'NOT NULL' ],
-            "price"       => [ 'type' => 'int(11)', 'null' => 'NOT NULL' ],
+            "price"       => [ 'type' => 'double', 'null' => 'NOT NULL' ],
         ];
         
         $info["Money_wallet"] = [
@@ -138,19 +138,38 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
         //Начало транзакции
         $this->action(function ($database)
         {
-            $data = $this->TransactionData;
-            $database->insert("Money_wallet_history", $data);
+            $resultTransaction = false;
             
+            $data = $this->TransactionData;
             $data_wallet = [
                 "balance[+]" => $data["amount"],
             ];
-            $database->update("Money_wallet", $data_wallet, [ "id" => $data["id_wallet"] ]);
+            
+            $where = [ "id" => $data["id_wallet"] ];
+            if ($data["amount"] < 0) {
+                $where["balance[>=]"] = abs($data["amount"]);
+            }
+            $data = $database->update("Money_wallet", $data_wallet, $where);
+            $rowCount = $data->rowCount();
+            
+            if ($rowCount > 0) {
+                $database->insert("Money_wallet_history", $data);
+                $this->TransactionData = $result = $this->error();
+                if (is_array($result) && ($result[0] === "00000"))
+                {
+                    $resultTransaction = true;
+                }
+            }
+            else
+            {
+                $this->TransactionData = ["-9999", "not enough balance"];
+            }
+            
+            return $resultTransaction;
         });
         //Конец транзакции
         
-        $result = $this->error();
-        
-        return $result;
+        return $this->TransactionData;
     }
     
     public function get_balance($id_wallet)
