@@ -100,5 +100,4 @@ abstract class extend_controller implements Controller
     }
     
     abstract public function Init($params);
-
 }
