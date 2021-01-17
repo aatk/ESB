@@ -1,0 +1,6 @@
+actor: ApiTester
+modules:
+    enabled:
+        - REST:
+              url: http://host-8:8888/api/v1/
+              depends: PhpBrowser
