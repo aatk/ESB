@@ -10,7 +10,7 @@ require_once ROOT.'vendors/Medoo/Medoo.php';
 
 use Medoo\Medoo;
 
-class CRUD
+class CRUD implements Db
 {
     public  $sql_interface = null;
     private $debugclass;
@@ -19,11 +19,8 @@ class CRUD
     {
         $this->debugclass = $debug;
         
-        
         if (isset($connectionInfo))
         {
-            
-            
             if (!isset($_SESSION["db_connect"]) && (is_null($_SESSION["db_connect"]["server"])))
             {
                 $_SESSION["db_connect"] = new Medoo($connectionInfo);
@@ -38,9 +35,7 @@ class CRUD
             $this->sql_interface->query("set character_set_results='utf8'");
             $this->sql_interface->query("set collation_connection='utf8_general_ci'");
             $this->sql_interface->query("SET NAMES utf8");
-            
-            
-        };
+        }
     }
     
     private function gettruetype($base, $type)

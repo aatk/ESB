@@ -7,18 +7,18 @@
  */
 
 
-class extend_controller
+abstract class extend_controller implements Controller
 {
-    public $GET      = null;
-    public $FILES    = null;
-    public $POST     = null;
-    public $REQUEST  = null;
-    public $SERVER   = null;
-    public $URI      = null;
-    public $phpinput = null;
-
-    public $method;
+    public $GET      = [];
+    public $FILES    = [];
+    public $POST     = [];
+    public $REQUEST  = [];
+    public $SERVER   = [];
+    public $URI      = [];
+    public $phpinput = [];
+    
     public $debugclass;
+    public $method;
 
     public function DTV($jsonarray, $inattr, $defresult = "", $dateformatfrom = "", $dateformatto = "YmdHis")
     {
@@ -81,7 +81,7 @@ class extend_controller
         return $result;
     }
     
-    public function __construct($method)
+    public function __construct()
     {
         $this->GET      = $_GET;
         $this->POST     = $_POST;
@@ -91,12 +91,11 @@ class extend_controller
         $this->URI      = explode("/", $_SERVER["REQUEST_URI"]);
         $this->phpinput = file_get_contents("php://input");
     
-        $this->method = $method;
-        
         $this->debugclass = false;
         if ($this->DTV($this->REQUEST, ["debug"], false)) {
             $this->debugclass = true;
         }
-    
+
+        $this->method          = $_SERVER["REQUEST_METHOD"];
     }
 }

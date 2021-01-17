@@ -4,12 +4,19 @@
  * Class extend_view
  */
 
-class extend_view
+abstract class extend_view implements View
 {
-    public $method;
+    public $object = [];
     
-    public function __construct($method)
+    public function __construct($viewobject)
     {
-        $this->method = $method;
+        $this->object = $viewobject;
+    }
+    
+    abstract public function generate();
+
+    public function __toString()
+    {
+        return $this->generate();
     }
 }
