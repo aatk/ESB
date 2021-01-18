@@ -73,12 +73,14 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
         {
             $this->insert("Money_currency", [ "id" => 643, "name" => "RUB" ]);
         }
-
+    
+        //Заполняем таблицу Money_currency_history DEMO данными
         if (!$this->has("Money_currency_history", [ "date" => "2021-01-01", "id_currency" => "840"] ))
         {
             $this->insert("Money_currency_history", [ "date" => "2021-01-01", "id_currency" => "840",  "price" => 70]);
         }
     
+        //Заполняем таблицу Money_wallet DEMO данными
         if (!$this->has("Money_wallet", [ "id" => 1 ]))
         {
             $this->insert("Money_wallet", [ "id" => 1, "balance" => 0, "id_currency" => 643 ]);
@@ -88,7 +90,8 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
             $this->insert("Money_wallet", [ "id" => 2, "balance" => 0, "id_currency" => 840 ]);
         }
     
-        
+    
+        //Заполняем таблицу Money_users DEMO данными
         if (!$this->has("Money_users", [ "id" => 1 ]))
         {
             $this->insert("Money_users", [ "id" => 1, "name" => "test1", "id_wallet" => 1 ]);
