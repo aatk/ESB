@@ -78,6 +78,16 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
         {
             $this->insert("Money_currency_history", [ "date" => "2021-01-01", "id_currency" => "840",  "price" => 70]);
         }
+    
+        if (!$this->has("Money_users", [ "id" => 1 ]))
+        {
+            $this->insert("Money_users", [ "id" => 1, "name" => "test1", "id_wallet" => 1 ]);
+        }
+        if (!$this->has("Money_users", [ "id" => 2 ]))
+        {
+            $this->insert("Money_users", [ "id" => 2, "name" => "test2", "id_wallet" => 2 ]);
+        }
+    
     }
     
     public function __construct($connectionInfo = null, $debug = false)
