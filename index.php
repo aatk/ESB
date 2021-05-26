@@ -12,8 +12,6 @@ session_start(); //Стартуем сессию только после под�
 require_once 'settings.php'; //подключаем настройки
 
 //Основной приниающий файл REST API
-if (isset($_REQUEST["q"]))
-{
     $method = $_SERVER["REQUEST_METHOD"];
     $q      = $_REQUEST["q"];
     unset($_REQUEST["q"]);
@@ -24,7 +22,7 @@ if (isset($_REQUEST["q"]))
     if (class_exists("Routh"))
     {
         $wClass = loader("Routh");
-        $result = $wClass->Init($res);
+        $result = $wClass->Init([$class, $res]);
     }
     elseif (class_exists($class))
     {
@@ -32,18 +30,17 @@ if (isset($_REQUEST["q"]))
         $param = array_slice($res, 1);
         $result = $wClass->Init($param);
     }
-    else
+    elseif (isset($_REQUEST["q"]))
     {
         $result['result'] = false;
         $result['error']  = "No such treatment";
         $result['msg']    = "$class";
     }
-}
-else
-{
-    $result['result'] = false;
-    $result['error']  = "Error handling to a REST API";
-}
+    else
+    {
+        $result['result'] = false;
+        $result['error']  = "Error handling to a REST API";
+    }
 
 
 unset($_SESSION["db_connect"]); // удаляем из сессии класс с базой
@@ -63,6 +60,11 @@ if (is_array($result)) {
         
         $header_text = 'HTTP/1.1 ' . $code . ' ' . $message;
         header($header_text);
+    }
+    else
+    {
+        header("Content-type: application/json");
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
     }
 }
 
@@ -87,9 +89,4 @@ elseif (is_bool($result) && !$result)
     }
     header($header_text);
     echo "";
-}
-else
-{
-    header("Content-type: application/json");
-    echo json_encode($result, JSON_UNESCAPED_UNICODE);
 }
