@@ -98,4 +98,6 @@ abstract class extend_controller implements Controller
 
         $this->method          = $_SERVER["REQUEST_METHOD"];
     }
+    
+    abstract public function Init($params);
 }

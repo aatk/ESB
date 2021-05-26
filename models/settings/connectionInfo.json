@@ -8,13 +8,13 @@
             "server": "localhost"
         },
         {
-            "database_name": "money_demo"
+            "database_name": "demo"
         },
         {
-            "username": "money_demo"
+            "username": "demo"
         },
         {
-            "password": "money_demo"
+            "password": "demo"
         },
         {
             "charset": "utf8"
