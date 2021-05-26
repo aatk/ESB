@@ -9,6 +9,11 @@ class SystemM extends extend_controller implements InstallModule
         $this->method = $method;
     }
     
+    public function Init($params)
+    {
+        //
+    }
+    
     public function InstallModule()
     {
         $dirlist = [ "controllers", "interfaces", "models", "vendors", "tmp" ];
