@@ -26,8 +26,17 @@ class System extends extend_controller
             {
                 $result = $this->SystemM->UpdateSystem();
             }
+            elseif ($func == "phpinfo")
+            {
+                $result = $this->phpinfo();
+            }
         }
         
         return $result;
+    }
+    
+    public function phpinfo()
+    {
+        phpinfo();
     }
 }
