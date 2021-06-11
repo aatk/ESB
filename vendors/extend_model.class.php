@@ -10,15 +10,16 @@
 abstract class extend_model extends CRUD
 {
     private $curlheader;
+    protected $connectionInfo;
     
     public function __construct($connectionInfo = null, $debug = false)
     {
         if ($connectionInfo == null)
         {
-            $connectionInfo = $_SESSION["i4b"]["connectionInfo"];
+            $this->connectionInfo = $_SESSION["i4b"]["connectionInfo"];
         }
         
-        parent::__construct($connectionInfo, $debug);
+        parent::__construct($this->connectionInfo, $debug);
     }
     
     private function header_callback($ch, $header_line)
