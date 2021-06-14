@@ -11,7 +11,7 @@ class TwigRender extends extend_view
         $params = $this->object["params"];
         $templates = $this->object["templates"];
         
-        echo $this->Show($html, $params, $templates);
+        return $this->Show($html, $params, $templates);
     }
     
     public function Show($text, $params = [], $templates = null)
