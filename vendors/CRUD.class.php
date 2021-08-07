@@ -2,8 +2,10 @@
 /**
  * Created by PhpStorm.
  * User: Alex
- * Date: 30.10.17
- * Time: 12:22
+ * Date: 07.08.21
+ * Time: 20:05
+ *
+ * Update to medoo 2.1.2
  */
 
 require_once ROOT.'vendors/Medoo/Medoo.php';
@@ -379,7 +381,7 @@ class CRUD implements Db
     
     public function error()
     {
-        return $this->sql_interface->error();
+        return $this->sql_interface->error;
     }
     
     public function last_query()
