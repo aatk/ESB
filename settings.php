@@ -40,9 +40,16 @@
                 if (isset($json["Info"]))
                 {
                     $setsetting = [];
-                    foreach ($json["Info"] as $val)
+                    foreach ($json["Info"] as $key => $val)
                     {
-                        $setsetting = array_merge($setsetting, $val);
+                        if (is_array($val))
+                        {
+                            $setsetting = array_merge($setsetting, $val);
+                        }
+                        else
+                        {
+                            $setsetting[$key] = $val;
+                        }
                     }
                     if (isset($json["Name"]))
                     {
