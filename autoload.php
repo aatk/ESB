@@ -1,98 +1,110 @@
 <?php
-
-define('ROOT', dirname(__FILE__) . '/');
-
-function loader($class, $metod = "")
-{
-    return new $class();
-}
-
-function mb_ucfirst($str, $encoding = 'UTF-8')
-{
-    $str = mb_ereg_replace('^[\ ]+', '', $str);
-    $str = mb_strtoupper(mb_substr($str, 0, 1, $encoding), $encoding) .
-        mb_substr($str, 1, mb_strlen($str), $encoding);
     
-    return $str;
-}
-
-function clean_classname($classname)
-{
-    /*НАДО БЕЗОПАСНО ОБРАБОТАТЬ ПЕРЕД EVAL*/
-    $notAllow  = [ '/', '\\', '"', ':', '*', '?', '<', '>', '|', '%' ];
-    $classname = str_replace($notAllow, '', $classname);
-    $classname = mb_substr($classname, 0, 50, 'utf-8');
-    $classname = mb_ucfirst($classname);
-    //$classname = mysql_escape_string($classname);   //PHP 7 - не работает
-    /*ЗАКОНЧИЛИ ОБРЕЗАНИЕ*/
+    define('ROOT', dirname(__FILE__) . '/');
     
-    return $classname;
-}
-
-/**
- * @param string $class_name
- *
- * @return bool
- */
-function class_autoload($class_name)
-{
-    $require_file = "";
-    if ($require_file == "")
+    function loader ($class, $metod = "")
     {
-        $file = ROOT . 'controllers/' . $class_name . '.controller.php';
-        if (file_exists($file) !== false)
+        return new $class();
+    }
+    
+    function mb_ucfirst ($str, $encoding = 'UTF-8')
+    {
+        $str = mb_ereg_replace('^[\ ]+', '', $str);
+        $str = mb_strtoupper(mb_substr($str, 0, 1, $encoding), $encoding) . mb_substr($str, 1, mb_strlen($str), $encoding);
+        
+        return $str;
+    }
+    
+    function clean_classname ($classname)
+    {
+        /*НАДО БЕЗОПАСНО ОБРАБОТАТЬ ПЕРЕД EVAL*/
+        $notAllow = ['/', '\\', '"', ':', '*', '?', '<', '>', '|', '%'];
+        $classname = str_replace($notAllow, '', $classname);
+        $classname = mb_substr($classname, 0, 50, 'utf-8');
+        $classname = mb_ucfirst($classname);
+        //$classname = mysql_escape_string($classname);   //PHP 7 - не работает
+        /*ЗАКОНЧИЛИ ОБРЕЗАНИЕ*/
+        
+        return $classname;
+    }
+    
+    /**
+     * @param string $class_name
+     *
+     * @return bool
+     */
+    function class_autoload ($class_name)
+    {
+        $require_file = "";
+        if (isset($_SESSION["i4b"]["classmapInfo"][$class_name]))
         {
-            $require_file = $file;
+            //FOR A LARGE PROJECT WITH MODULE MAPS
+            $file_path = $_SESSION["i4b"]["classmapInfo"][$class_name];
+            $file = ROOT . $file_path;
+            if (file_exists($file) !== false)
+            {
+                $require_file = $file;
+            }
         }
-    }
-    
-    if ($require_file == "")
-    {
-        $file = ROOT . 'models/' . $class_name . '.model.php';
-        if (file_exists($file) !== false)
+        else
         {
-            $require_file = $file;
+            if ($require_file == "")
+            {
+                $file = ROOT . 'controllers/' . $class_name . '.controller.php';
+                if (file_exists($file) !== false)
+                {
+                    $require_file = $file;
+                }
+            }
+            
+            if ($require_file == "")
+            {
+                $file = ROOT . 'models/' . $class_name . '.model.php';
+                if (file_exists($file) !== false)
+                {
+                    $require_file = $file;
+                }
+            }
+            
+            if ($require_file == "")
+            {
+                $file = ROOT . 'vendors/' . $class_name . '.class.php';
+                if (file_exists($file) !== false)
+                {
+                    $require_file = $file;
+                }
+            }
+            
+            if ($require_file == "")
+            {
+                $file = ROOT . 'views/' . $class_name . '.view.php';
+                if (file_exists($file) !== false)
+                {
+                    $require_file = $file;
+                }
+            }
+            
+            if ($require_file == "")
+            {
+                $file = ROOT . 'interfaces/' . $class_name . '.interface.php';
+                if (file_exists($file) !== false)
+                {
+                    $require_file = $file;
+                }
+            }
         }
-    }
-    
-    if ($require_file == "")
-    {
-        $file = ROOT . 'vendors/' . $class_name . '.class.php';
-        if (file_exists($file) !== false)
+        
+        if ($require_file != "")
         {
-            $require_file = $file;
+            require_once($require_file);
+            $result = true;
         }
-    }
-    
-    if ($require_file == "")
-    {
-        $file = ROOT . 'views/' . $class_name . '.view.php';
-        if (file_exists($file) !== false)
+        else
         {
-            $require_file = $file;
+            $result = false;
         }
-    }
-
-    if ($require_file == "")
-    {
-        $file = ROOT . 'interfaces/' . $class_name . '.interface.php';
-        if (file_exists($file) !== false)
-        {
-            $require_file = $file;
-        }
+        
+        return $result;
     }
     
-    if ($require_file != "")
-    {
-        require_once($require_file);
-        $result = true;
-    }
-    else
-    {
-        $result = false;
-    }
-    
-    return $result;
-}
-
-spl_autoload_register('class_autoload');
+    spl_autoload_register('class_autoload');
