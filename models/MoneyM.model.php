@@ -177,8 +177,8 @@ class MoneyM extends extend_model implements CreateDB, InstallModule
             if ($data["amount"] < 0) {
                 $where["balance[>=]"] = abs($data["amount"]);
             }
-            $data = $database->update("Money_wallet", $data_wallet, $where);
-            $rowCount = $data->rowCount();
+            $PDOdata = $database->update("Money_wallet", $data_wallet, $where);
+            $rowCount = $PDOdata->rowCount();
             
             if ($rowCount > 0) {
                 $database->insert("Money_wallet_history", $data);
