@@ -5,22 +5,22 @@
             "database_type": "mysql"
         },
         {
-            "server": "localhost"
+            "server": "mysql"
         },
         {
             "database_name": "demo"
         },
         {
-            "username": "demo"
+            "username": "root"
         },
         {
-            "password": "demo"
+            "password": "root"
         },
         {
             "charset": "utf8"
         },
         {
-            "port": "8889"
+            "port": "3306"
         }
     ]
 }

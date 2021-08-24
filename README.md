@@ -34,8 +34,8 @@ SQL запрос
 * Все спорные вопросы в задаче может и должен решать Исполнитель;
 
 # Правила развертки
-* Создать базу данных money_demo на сервере localhost
-* Пользователя MySql с логином и паролем money_demo и правами на изменение БД money_demo 
+* Создать базу данных demo на сервере localhost
+* Пользователя MySql с логином и паролем root и правами на изменение БД demo 
   * изменить данные подключения к БД можно в файле models/settings/connectionInfo.json
 * сделать клон ветки, запустить из командной строки
   * git clone https://github.com/aatk/ESB.git && cd ESB && git checkout money_demo
